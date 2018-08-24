@@ -1,0 +1,11 @@
+Mediciones con trafo a 50 hz (linea). Voltaje a 14.4 kV. CH1=voltaje activo CH3=Istr CH4=Idbd. Fuente negativa a -9kV.
+
+Trafo 1,2,3.csv
+	Mediciones de varios periodos
+
+Trafo 4-8.csv
+	Mediciones con las mismas especificaciones pero con un solo periodo (zoom). Mas resolucion. Se ve el efecto de que
+	la senal no es armonica. En los picos de dbd y str se ve una zona apagada. Esto corresponderia a la descomposicion
+	en fourier.
+Trafo 9-12.csv
+	Nuevas mediciones sin zoom. Se ve un poco mas que un periodo.
