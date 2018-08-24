@@ -3,7 +3,7 @@ BobinaX.csv
 	(resonancia a ojo).
 	-9 kV de fuente continua sobre la malla (electrodo externo). A partir de Bobina2.csv en adelante se midio un
 	solo periodo (en bobina1.csv se midio mas de un periodo (menos resolucion).
-	CH1=Voltaje activo  CH3=Idbd  CH4=Istr
+	CH1=Voltaje activo  CH3=Istr  CH4=Idbd
 
 Bobina 5.csv
 	Esta corrido para que se vean 2 zonas de picos. El voltaje bajo a 18,8 kV
@@ -13,4 +13,12 @@ Bobina 6.csv ; 7 y 8 tambien
 
 Bobina 9.csv ; 10 y 11 tambien	
 	Nuevamente tratamos de medir un solo periodo a 19,2 kV
+
+
+
+Resultados:
+
+	Bobina 9: 
+		potencia= 1.24406 W
+		Corriente media de streamers=1.93989 mA
 	
