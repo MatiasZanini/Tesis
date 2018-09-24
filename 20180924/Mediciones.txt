@@ -7,3 +7,6 @@ Ch1 voltaje Ch3 Istr Ch4 Idbd (ambas cayendo sobre 50 ohms)
 Bobina 10 mas voltaje varios periodos
 
 Bobina 11 en adelante mas voltaje un periodo
+
+Bobina 13 en adelante cambiamos a Ch2 para la dbd y ch 4 para la str. La punta de la str es una nueva que 
+nos dio diego que atenua x10
