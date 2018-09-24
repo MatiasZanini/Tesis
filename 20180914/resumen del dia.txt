@@ -1,0 +1,6 @@
+-termine la version 2 del programa para medir potencia y corriente a alta frecuencia. Todavia le queda el problema de que
+se vuelve loco al tomar como input señales que contienen varios periodos. Habria que buscar una forma de definir mejor el
+periodo y asi poder recortar la señal para quedarse con uno solo.
+
+-Otro problema (inherente a la medicion, el programa no tiene nada que ver) es que la señal dbd tiene picos negativos
+bastante grandes y en cantidades no despreciables. La potencia de la dbd es mas grande que la de str (esta bien eso?)
