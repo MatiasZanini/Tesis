@@ -1,0 +1,9 @@
+Frecuencia 5580 hz
+
+Bobina de 1 a 6 con un periodo. De 7 en adelante mas de un periodo
+
+Ch1 voltaje Ch3 Istr Ch4 Idbd (ambas cayendo sobre 50 ohms)
+
+Bobina 10 mas voltaje varios periodos
+
+Bobina 11 en adelante mas voltaje un periodo
