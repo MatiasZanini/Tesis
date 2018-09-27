@@ -1,0 +1,13 @@
+Solucionamos el problema de la media corona perdida. El problema (además de que el cable estaba azulfatado y un poco sucio
+de aislante) era que encendiamos la fuente negativa demasiado rapido, y ademas era muy fuerte. El martes pasado era de
+13 kv ahora la pusimos a 9 kv. Primero encendemos bien la DBD y una vez hecho esto encendemos la fuente negativa.
+Con esto logramos tener una linda corona completa. 
+
+Falta aislar bien el lado neutro del disco. La idea es dejar secando toda esta noche.
+
+Por no aislarlo antes se hizo una chispa muy grande en la Dbd(de catodo a anodo) y se quemo el pvc en esa zona. Voy a 
+lijarlo y ponerle poxi antes de medir
+
+Datos de mediciones: Fuente neg. -9kv, Freq. 5456 hz, Ch1 Voltaje, Ch2 Dbd, Ch3 Str
+
+Bobina 
