@@ -10,4 +10,8 @@ lijarlo y ponerle poxi antes de medir
 
 Datos de mediciones: Fuente neg. -9kv, Freq. 5456 hz, Ch1 Voltaje, Ch2 Dbd, Ch3 Str
 
-Bobina 
+Ya no me quedo tiempo para medir porque se tendria que secar el poxi. Le deje el disco a Jorge para que lo aisle bien
+con el esmalte de alta tension. 
+
+Para la proxima probar con la fuente negativa un poco menos fuerte y encender bien la dbd antes de prenderla. 
+Se quemo precisamente porque la negativa estaba muy alta para la dbd que se armaba re bien a alto voltaje.
