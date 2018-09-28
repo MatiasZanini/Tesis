@@ -10,3 +10,15 @@ Bobina 11 en adelante mas voltaje un periodo
 
 Bobina 13 en adelante cambiamos a Ch2 para la dbd y ch 4 para la str. La punta de la str es una nueva que 
 nos dio diego que atenua x10
+
+
+
+
+Analisis rapido: la potencia media de streamers (para bobina 13) dio: 7.81401 W
+
+		 la potencia media de dbd (para bobina 13) dio: 0.202404 W
+		
+			
+
+		la potencia media de streamers (para bobina 14) dio: 6.05538 W
+		la potencia media de dbd (para bobina 14) dio: 0.0869374 W
