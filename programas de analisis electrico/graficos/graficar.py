@@ -59,11 +59,13 @@ with open(r"C:\Users\Matías\Documents\GitHub\Tesis\20180928\Concentracion NO.cs
         control2=str.find(arr[2],'E-')
         control3=str.find(arr[3],'E-')
         control4=str.find(arr[4],'E-')
-        if control1 == -1 & control2 == -1 & control3 == -1 & control4 == -1:
+        control5=str.find(arr[5],'E-')
+        if control1 == -1 & control2 == -1 & control3 == -1 & control4 == -1 & control5==-1:
             NO=np.append(NO,float(arr[1]))
             NO2=np.append(NO2,float(arr[2]))
             CO=np.append(CO,float(arr[3]))
             NOx=np.append(NOx,float(arr[4]))
+            caudal=np.append(caudal,float(arr[5]))
             
 duracion= float(88.58)  #minutos
 
@@ -74,25 +76,86 @@ puntos=len(NO)
             
 #%%
 # PLOTEAR NO
-tiempo=np.linspace(0,duracion,puntos)
-plt.plot(tiempo,NO)
+
+duracionNO= float(88.58)  #minutos
+
+puntosNO=len(NO)
+
+tiempoNO=np.linspace(0,duracionNO,puntosNO)
+plt.plot(tiempoNO,NO)
+
+plt.xlabel('Tiempo (m)')
+plt.ylabel('Concentración de NO (ppm)')
+plt.grid(True)
 
 
 #%%
  #PLOTEAR NO2
+
+duracionNO2= float(88.58)  #minutos
+
+puntosNO2=len(NO2)
+
+tiempoNO2=np.linspace(0,duracionNO2,puntosNO2)
+plt.plot(tiempoNO2,NO2)
+
+plt.xlabel('Tiempo (m)')
+plt.ylabel('Concentración de NO2 (ppm)')
+plt.grid(True)
 
 
 #%%
 
 #PLOTEAR CO
  
+duracionCO= float(88.58)  #minutos
+
+puntosCO=len(CO)
+
+tiempoCO=np.linspace(0,duracionCO,puntosCO)
+plt.plot(tiempoCO,CO)
+
+plt.xlabel('Tiempo (m)')
+plt.ylabel('Concentración de CO (ppm)')
+plt.grid(True)
+
  
  #%%
  
  #PLOTEAR NOX
 
+duracionNOx= float(88.58)  #minutos
+
+puntosNOx=len(NOx)
+
+tiempoNOx=np.linspace(0,duracionNOx,puntosNOx)
+plt.plot(tiempoNOx,NOx)
+
+plt.xlabel('Tiempo (m)')
+plt.ylabel('Concentración de NOx (ppm)')
+plt.grid(True)
 
 
+#%%
+
+#------------------- ------CÁLCULO DE EFICIENCIA EXPERIMENTAL-------------------------
+
+
+pot=60 #ingresar potencia en watts
+
+inicio=67 #poner el minuto en que se encendió la descarga
+
+donde=np.where(tiempoNO>=inicio)[0] # array cuyo primer valor es el índice donde comienza la descarga
+inicio=tiempoNO[donde[0]] #tiempo de inicio medido por la máquina
+
+ci= max(NO[donde[0]:(len(NO)-1)]) #concentracion inicial en ppm
+cf= min(NO[donde[0]:(len(NO)-1)]) #concentracion final en ppm
+
+efic_porcentual= (ci-cf)/ci *100 #eficiencia porcentual absoluta
+
+caudalprom=np.mean(caudal)
+
+efic = (caudalprom*(ci-cf)*1e-3 * 0.0407)/pot #eficiencia relativa a la potencia suministrada en mol/(kW H)
 
 
 
