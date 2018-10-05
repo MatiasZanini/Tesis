@@ -1,6 +1,10 @@
-Jueves 27/9 - armar el nuevo catodo con alambres nuevos. Medir la potencia de las mediciones del día 24/9 a partir de
+-Jueves 27/9 - armar el nuevo catodo con alambres nuevos. Medir la potencia de las mediciones del día 24/9 a partir de
 Bobina 13 en adelante ya que se midieron con la nueva punta. Comparar con las anteriores. Recordar que estas mediciones 
 fueron hechas con casi la mitad de la corona de plasma perdida por un esparcimiento del aislante.
 
+<<<<<<< HEAD
 Lunes 8/10- en adelante. - agregar mas etapas para baja frecuencia ya que vimos que tiene una baja eficiencia absoluta,
 hay que ver cuanta es la eficiencia energetica.
+=======
+-Viernes 5/10 - repetir medicion con gas NO a alta frecuencia (la anterior fue un exito) y probar con baja frecuencia.
+>>>>>>> 22b07f6fb2d31a335543b61f6e157f0f8d776d40

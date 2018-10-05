@@ -1,0 +1,35 @@
+Hoy medimos la potencia de nuevo con la aislacion correcta. Las primeras mediciones "Bobina" se corresponden a esas
+mediciones para el aire.
+
+Despues logramos hacer andar el medidor. Hubo unas filtraciones de aire en el reactor que provenian de un  Oring roto.
+Solucionado eso, pudimos medir concentracion. El "cero" de ppm de NO tuvo que ser recalibrado. A un flujo de aire de 94 l/h
+habia 640 ppm de NO, lo recalibramos a 510(+-15) ppm que es lo que midieron los fabricantes.
+
+Seteo para medir (resumen):
+	Mientras el ciclo del programa corre los primeros 5 minutos,se toma aire de afuera. Una vez terminado eso, empieza
+	a chupar desde el colector del gas (que debe estar desconectado). Luego, se abre el gas (con la valvula de 
+	seguridad cerrada). Despues se conecta el colector al reactor para que empiece a chupar el aire en su interior 
+	(se empezara a hacer un poco de vacio lo cual indica que esta bien sellado el reactor). Ahí se empieza a abrir la
+	valvula del gas de a poquito hasta que la presion a la salida sea 0 (esto indica que hay un equilibrio dinamico
+	entre lo que sale del tubo y lo que entra al sensor). Los ppm del NO empezaran a subir hasta 510 ppm a un caudal de
+	bombeo de 94 l/h. En ese momento ya estara estable y se podra empezar a medir. Para ello hay que ir a "results"
+	y en ese momento todo lo que mida se guardara en un archivo CSV. Ahora se puede encender la descarga y ver como
+	la concentracion de NO decrece hasta alcanzar un minimo estable. Una vez estabilizado ya se puede terminar de medir
+	la concentracion y empezar a medir la potencia. (se puede medir la potencia antes tambien para comparar).
+	Una vez terminado, se cierra la valvula principal del gas, luego la valvula de seguridad, se deja que se haga un 
+	poco de vacio, y luego se desconecta el tubo del colector. Una vez hecho eso ya se puede terminar el ciclo de
+	medicion.
+
+Mediciones
+	Bobina x.csv
+		Potencia para el aire con el electrodo arreglado con poxi.
+	
+	Bobina gas x.csv
+		Medicion de la potencia con el gas NO.
+
+	Concentracion NO
+		Tiene los datos de concentracion del NO en funcion del tiempo. Las primeras bajadas se obvtuvieron con los
+		conectores intercambiados (dimos vuelta el electrodo). Para la proxima reacomodarlo. La ultima medicion
+		se hizo correctamente y dio muy bien la bajada de concentracion. Aparecio un poco de CO aparentemente por
+		alguna combustion del PVC, y un poco de NO2 como subproducto no deseado.
+		
