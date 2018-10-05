@@ -45,7 +45,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\20180928\Concentracion NO.csv") as csvfile:
+with open(r"C:\Users\Matías\Documents\GitHub\Tesis\2018105\Concentracion NO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -77,7 +77,7 @@ puntos=len(NO)
 #%%
 # PLOTEAR NO
 
-duracionNO= float(88.58)  #minutos
+duracionNO= float(79.07)  #minutos
 
 puntosNO=len(NO)
 
@@ -143,7 +143,7 @@ plt.grid(True)
 
 pot=60 #ingresar potencia en watts
 
-inicio=67 #poner el minuto en que se encendió la descarga
+inicio=43 #poner el minuto en que se encendió la descarga
 
 donde=np.where(tiempoNO>=inicio)[0] # array cuyo primer valor es el índice donde comienza la descarga
 inicio=tiempoNO[donde[0]] #tiempo de inicio medido por la máquina
@@ -159,7 +159,8 @@ efic = (caudalprom*(ci-cf)*1e-3 * 0.0407)/pot #eficiencia relativa a la potencia
 
 
 
-
+#AGREGAR UN TIEMPO DE FIN PARA PODER CALCULAR LA POTENCIA DE DIFERENTES MEDICIONES
+#EN ESTE CASO NECESITAMOS UNA PARA ALTA FREC Y OTRO PARA BAJA
 
 
 
