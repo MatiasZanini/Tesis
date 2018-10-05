@@ -1,0 +1,16 @@
+Ch1 voltaje ch2 dbd ch3 streamers
+
+
+Medimos la concentracion de NO para alta y baja frecuencia. La primer medicion corresponde a alta frecuencia. 
+Nos olvidamos de medir la potencia para esa medicion y pasamos a baja frecuencia. Ahi medimos concentracion
+y potencia tambien. Luego volvimos a alta y prendimos nuevamente la descarga con los valores que recordabamos.
+Medimos la potencia en esas condiciones. En principio vimos que obtuvimos mas o menos la misma eficiencia absoluta para 
+alta frecuencia, por lo cual suponemos que para esta configuracion la eficiencia absoluta no depende de la potencia. Esto
+podria deberse a que el gas esta circulando muy rapido y no dejamos actuar al plama el suficiente tiempo.
+
+Ideas(dospuntos) 
+-poner una trampa para que el aire se vea forzado a recircular por el interior de la camara antes de poder
+ser aspirado por el medidor de concentracion.
+-poner una especie de lazo con una bomba para que el gas recircule hacia el interior antes de ser aspirado por el medidor
+(mas complicada)
+

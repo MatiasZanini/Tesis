@@ -1,3 +1,6 @@
 Jueves 27/9 - armar el nuevo catodo con alambres nuevos. Medir la potencia de las mediciones del día 24/9 a partir de
 Bobina 13 en adelante ya que se midieron con la nueva punta. Comparar con las anteriores. Recordar que estas mediciones 
 fueron hechas con casi la mitad de la corona de plasma perdida por un esparcimiento del aislante.
+
+Lunes 8/10- en adelante. - agregar mas etapas para baja frecuencia ya que vimos que tiene una baja eficiencia absoluta,
+hay que ver cuanta es la eficiencia energetica.
