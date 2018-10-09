@@ -1,0 +1,5 @@
+CH1 voltaje, CH2 dbd, CH3 str.
+
+Medimos concentracion del NO para el trafo de baja frecuencia otra vez, y las senales electricas.
+
+ 
