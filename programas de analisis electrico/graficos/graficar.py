@@ -9,6 +9,7 @@ import csv
 #import sys
 import matplotlib.pyplot as plt
 import numpy as np
+import funciones as func
 
 #%%
 
@@ -20,7 +21,7 @@ csv.register_dialect('pycoma', delimiter=';') #PONER ACÁ EL DELIMITADOR DEL ARC
 
 #LEER UN ARCHIVO CSV
 
-f = open(r'C:\Users\Matías\Documents\GitHub\Tesis\20180928\Concentracion NO.csv', 'rt')
+f = open(r'C:\Users\Matías\Documents\GitHub\Tesis\20181005\Concentracion NO.csv', 'rt')
 try:
     reader = csv.reader(f,dialect='pycoma') #si no se pone el dialect es ',' por defecto
     for row in reader:
@@ -30,7 +31,7 @@ finally:
 
 #%%
 
-#------------------------GRAFICAR CONCENTRACION DE GASES-------------------------
+#------------------------OBTENER CONCENTRACION DE GASES-------------------------
 
 
 csv.register_dialect('pycoma', delimiter=';')
@@ -45,7 +46,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\2018105\Concentracion NO.csv") as csvfile:
+with open(r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Concentracion NO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -67,17 +68,22 @@ with open(r"C:\Users\Matías\Documents\GitHub\Tesis\2018105\Concentracion NO.csv
             NOx=np.append(NOx,float(arr[4]))
             caudal=np.append(caudal,float(arr[5]))
             
-duracion= float(88.58)  #minutos
+#duracion= float(88.58)  #minutos
+#
+#puntos=len(NO)
+ti=matriz[2][0].split(' ')[1]
+tf=matriz[len(matriz)-1][0].split(' ')[1]
 
-puntos=len(NO)
+duracion=func.lapso(ti,tf)
 
+print('duración de la medición total:',duracion,'minutos')
 
 
             
 #%%
 # PLOTEAR NO
 
-duracionNO= float(79.07)  #minutos
+duracionNO= duracion  #minutos
 
 puntosNO=len(NO)
 
@@ -92,7 +98,7 @@ plt.grid(True)
 #%%
  #PLOTEAR NO2
 
-duracionNO2= float(88.58)  #minutos
+duracionNO2= duracion  #minutos
 
 puntosNO2=len(NO2)
 
@@ -108,7 +114,7 @@ plt.grid(True)
 
 #PLOTEAR CO
  
-duracionCO= float(88.58)  #minutos
+duracionCO= duracion  #minutos
 
 puntosCO=len(CO)
 
@@ -124,7 +130,7 @@ plt.grid(True)
  
  #PLOTEAR NOX
 
-duracionNOx= float(88.58)  #minutos
+duracionNOx= duracion  #minutos
 
 puntosNOx=len(NOx)
 
@@ -143,13 +149,20 @@ plt.grid(True)
 
 pot=60 #ingresar potencia en watts
 
-inicio=43 #poner el minuto en que se encendió la descarga
+inicio=22 #poner el minuto en que se encendió la descarga
 
-donde=np.where(tiempoNO>=inicio)[0] # array cuyo primer valor es el índice donde comienza la descarga
-inicio=tiempoNO[donde[0]] #tiempo de inicio medido por la máquina
+fin=30  #poner el minuto en que finalizó la descarga
 
-ci= max(NO[donde[0]:(len(NO)-1)]) #concentracion inicial en ppm
-cf= min(NO[donde[0]:(len(NO)-1)]) #concentracion final en ppm
+dondeini=np.where(tiempoNO>=inicio)[0][0] # índice donde comienza la descarga
+inicio=tiempoNO[dondeini] #tiempo de inicio medido por la máquina
+
+dondefin=np.where(tiempoNO>=fin)[0][0]#índice donde comienza la descarga
+
+
+
+
+ci= max(NO[dondeini:dondefin]) #concentracion inicial en ppm
+cf= min(NO[dondeini:dondefin]) #concentracion final en ppm
 
 efic_porcentual= (ci-cf)/ci *100 #eficiencia porcentual absoluta
 
@@ -157,10 +170,10 @@ caudalprom=np.mean(caudal)
 
 efic = (caudalprom*(ci-cf)*1e-3 * 0.0407)/pot #eficiencia relativa a la potencia suministrada en mol/(kW H)
 
+print('eficiencia porcentual:', efic_porcentual, '%')
+print('eficiencia por potencia:',efic,'mol/(kW H)')
 
 
-#AGREGAR UN TIEMPO DE FIN PARA PODER CALCULAR LA POTENCIA DE DIFERENTES MEDICIONES
-#EN ESTE CASO NECESITAMOS UNA PARA ALTA FREC Y OTRO PARA BAJA
 
 
 

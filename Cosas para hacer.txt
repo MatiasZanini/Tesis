@@ -8,3 +8,6 @@ hay que ver cuanta es la eficiencia energetica.
 
 -Viernes 5/10 - repetir medicion con gas NO a alta frecuencia (la anterior fue un exito) y probar con baja frecuencia.
 
+-analizar una señal del reactor de jorge o de los chicos de labo 6 y 7 con mi programa para descartar errores en la 
+programacion
+
