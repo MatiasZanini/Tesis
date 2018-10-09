@@ -1,0 +1,8 @@
+-Pedirle a jorge hacer dos discos de algun material tipo pvc o acrilico, que simplemente tengan dos agujeros a la distancia
+de las varillas. Asi los podemos enhebrar uno adelante y otro atras del reactor. tienen que tener un diametro a penas menor
+que el del tubo externo. De esa forma funcionan como trampa para el gas, y permite que interactue mas tiempo con el plasma.
+
+-regimen estanco: poner una valvula entre el tubo que chupa el gas, y la salida del reactor. Cerrar dicha valvula cuando 
+abramos el gas de forma de dejarlo atrapado dentro del reactor. Cerrar el gas y prender la descarga. Despues de un tiempo, 
+se abre la valvula y se mide. Va a haber que tener cuidado con los caudales, ya que si le mandamos mucha presion de gas al
+medidor, puede que reviente y/o no mida correctamente (ya que para hacerlo necesita chupar entre 90 y 100 l/h).
