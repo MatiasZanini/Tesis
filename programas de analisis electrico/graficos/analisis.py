@@ -10,6 +10,7 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 import funciones as func
+from importlib import reload
 
 #%%
 
@@ -46,12 +47,11 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Concentracion NO.csv") as csvfile:
+with open(r"C:\Users\Mati\Documents\GitHub\Tesis\20181005\Concentracion NO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
-        #arr=np.append(arr,np.asarray(row))
-        #NO=np.append(NO,np.array(float(arr[1])))
+     
     
     for i in range(len(matriz)-2):
         arr=np.asarray(matriz[i+2])
@@ -68,9 +68,7 @@ with open(r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Concentracion NO.cs
             NOx=np.append(NOx,float(arr[4]))
             caudal=np.append(caudal,float(arr[5]))
             
-#duracion= float(88.58)  #minutos
-#
-#puntos=len(NO)
+
 ti=matriz[2][0].split(' ')[1]
 tf=matriz[len(matriz)-1][0].split(' ')[1]
 
@@ -81,65 +79,36 @@ print('duración de la medición total:',duracion,'minutos')
 
             
 #%%
-# PLOTEAR NO
+#--------------------------------------------PLOTEAR CONCENTRACION------------------------------------
 
-duracionNO= duracion  #minutos
+#la funcion pide el array con la medicion, la duracion total y el nombre que se quiera en el label 
 
-puntosNO=len(NO)
+func.ploteo(NO,duracion,'NO')
 
-tiempoNO=np.linspace(0,duracionNO,puntosNO)
-plt.plot(tiempoNO,NO)
+#%%-------------------------------------POTENCIA------------------------------------------------------
 
-plt.xlabel('Tiempo (m)')
-plt.ylabel('Concentración de NO (ppm)')
+path=r"C:\Users\Mati\Documents\GitHub\Tesis\20181005\Bobina gas 1.csv"  #ingresar el path de la medicion electrica
+
+t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
+
+plt.plot(t_volt,volt)
+plt.xlabel('tiempo (s)')
+plt.ylabel('Voltaje entrada (V)')
 plt.grid(True)
 
-
-#%%
- #PLOTEAR NO2
-
-duracionNO2= duracion  #minutos
-
-puntosNO2=len(NO2)
-
-tiempoNO2=np.linspace(0,duracionNO2,puntosNO2)
-plt.plot(tiempoNO2,NO2)
-
-plt.xlabel('Tiempo (m)')
-plt.ylabel('Concentración de NO2 (ppm)')
-plt.grid(True)
-
+#ACA SE PUEDEN AGREGAR LOS GRAFICOS DE LAS DEMAS SEÑALES PARA VERLAS BIEN
 
 #%%
 
-#PLOTEAR CO
- 
-duracionCO= duracion  #minutos
+cant_per=3 #cantidad de periodos que hay en la medicion "a ojo"
 
-puntosCO=len(CO)
+volt_rec=volt[0:(int((len(volt)/cant_per)+1))]
+indmax=int(np.mean(np.where(volt_rec==max(volt_rec))[0]))
+indmin=int(np.mean(np.where(volt_rec==min(volt_rec))[0]))
 
-tiempoCO=np.linspace(0,duracionCO,puntosCO)
-plt.plot(tiempoCO,CO)
+iper=2*abs(indmax-indmin)                       #cantidad de elementos en un periodo
+tper=2*abs(t_volt[indmax]-t_volt[indmin])       #periodo en segundos
 
-plt.xlabel('Tiempo (m)')
-plt.ylabel('Concentración de CO (ppm)')
-plt.grid(True)
-
- 
- #%%
- 
- #PLOTEAR NOX
-
-duracionNOx= duracion  #minutos
-
-puntosNOx=len(NOx)
-
-tiempoNOx=np.linspace(0,duracionNOx,puntosNOx)
-plt.plot(tiempoNOx,NOx)
-
-plt.xlabel('Tiempo (m)')
-plt.ylabel('Concentración de NOx (ppm)')
-plt.grid(True)
 
 
 #%%
