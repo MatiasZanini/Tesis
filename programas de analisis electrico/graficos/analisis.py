@@ -14,7 +14,7 @@ from importlib import reload
 
 #%%
 
-csv.register_dialect('pycoma', delimiter=';') #PONER ACÁ EL DELIMITADOR DEL ARCHIVO
+reload(func)
 
 
 
@@ -87,20 +87,33 @@ func.ploteo(NO,duracion,'NO')
 
 #%%-------------------------------------POTENCIA------------------------------------------------------
 
-path=r"C:\Users\Mati\Documents\GitHub\Tesis\20181005\Bobina gas 1.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Bobina gas 1.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
+plt.subplot(3,1,1)
 plt.plot(t_volt,volt)
 plt.xlabel('tiempo (s)')
 plt.ylabel('Voltaje entrada (V)')
 plt.grid(True)
 
-#ACA SE PUEDEN AGREGAR LOS GRAFICOS DE LAS DEMAS SEÑALES PARA VERLAS BIEN
+plt.subplot(3,1,2)
+plt.plot(t_idbd,idbd*1000)
+plt.xlabel('tiempo (s)')
+plt.ylabel('Corriente de DBD (mA)')
+plt.grid(True)
+
+plt.subplot(3,1,3)
+plt.plot(t_istr,istr*1000)
+plt.xlabel('tiempo (s)')
+plt.ylabel('Corriente de streamers (mA)')
+plt.grid(True)
 
 #%%
 
 cant_per=3 #cantidad de periodos que hay en la medicion "a ojo"
+
+
 
 volt_rec=volt[0:(int((len(volt)/cant_per)+1))]
 indmax=int(np.mean(np.where(volt_rec==max(volt_rec))[0]))
@@ -108,6 +121,15 @@ indmin=int(np.mean(np.where(volt_rec==min(volt_rec))[0]))
 
 iper=2*abs(indmax-indmin)                       #cantidad de elementos en un periodo
 tper=2*abs(t_volt[indmax]-t_volt[indmin])       #periodo en segundos
+
+rec=func.recortar_corriente(t_idbd,idbd,tper)
+
+plt.plot(t_idbd,idbd)
+plt.plot(t_idbd,rec)
+
+
+
+
 
 
 
