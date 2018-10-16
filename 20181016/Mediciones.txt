@@ -1,0 +1,4 @@
+La medicion de jorge fue hecha con su reactor, con la fuente de continua a -10 Kv.
+
+Comprobamos el programa de mathematica y nos dio valores similares. (recordar que la señal de jorge ya viene en corriente
+y no hay que ponerle un factor de conversion).
