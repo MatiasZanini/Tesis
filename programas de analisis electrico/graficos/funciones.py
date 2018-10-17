@@ -93,7 +93,7 @@ def recortar_corriente(t_corr,corr,tper):
     indmax=int(np.mean(np.where(corr==max(corr))[0]))
     
     
-    cor_rec=corr
+    cor_rec=np.copy(corr)
     
     
     datoscorte=np.array([])
