@@ -12,23 +12,9 @@ import numpy as np
 import funciones as func
 from importlib import reload
 
-#%%
+#%%  ---------------------Recargar el modulo con las funciones----------
 
 reload(func)
-
-
-
-#%%
-
-#LEER UN ARCHIVO CSV
-
-f = open(r'C:\Users\Matías\Documents\GitHub\Tesis\20181005\Concentracion NO.csv', 'rt')
-try:
-    reader = csv.reader(f,dialect='pycoma') #si no se pone el dialect es ',' por defecto
-    for row in reader:
-        print(row)
-finally:
-    f.close()
 
 #%%
 
@@ -47,7 +33,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Mati\Documents\GitHub\Tesis\20181005\Concentracion NO.csv") as csvfile:
+with open(r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Concentracion NO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -68,11 +54,12 @@ with open(r"C:\Users\Mati\Documents\GitHub\Tesis\20181005\Concentracion NO.csv")
             NOx=np.append(NOx,float(arr[4]))
             caudal=np.append(caudal,float(arr[5]))
             
-
-ti=matriz[2][0].split(' ')[1]
-tf=matriz[len(matriz)-1][0].split(' ')[1]
+#%%
+ti=matriz[2][0].split(' ')[1]                #encuentra el tiempo inicial en formato stirng
+tf=matriz[len(matriz)-1][0].split(' ')[1]    #encuentra el tiempo final en formato string
 
 duracion=func.lapso(ti,tf)
+
 
 print('duración de la medición total:',duracion,'minutos')
 
@@ -81,9 +68,10 @@ print('duración de la medición total:',duracion,'minutos')
 #%%
 #--------------------------------------------PLOTEAR CONCENTRACION------------------------------------
 
-#la funcion pide el array con la medicion, la duracion total y el nombre que se quiera en el label 
+#la funcion pide el array con la medicion, la duracion total y 
+#el nombre que se quiera en el label 
 
-func.ploteo(NO,duracion,'NO')
+func.ploteo_concentracion(NO,duracion,'NO')
 
 #%%-------------------------------------POTENCIA------------------------------------------------------
 
@@ -122,11 +110,19 @@ indmin=int(np.mean(np.where(volt_rec==min(volt_rec))[0]))
 iper=2*abs(indmax-indmin)                       #cantidad de elementos en un periodo
 tper=2*abs(t_volt[indmax]-t_volt[indmin])       #periodo en segundos
 
-rec=func.recortar_corriente(t_idbd,idbd,tper)
+fit, rec =func.recortar_corriente(t_idbd,idbd,tper) #guarda la funcion recortada y su fiteo
 
-plt.plot(t_idbd,idbd)
-plt.plot(t_idbd,rec)
+plt.subplot(1,2,1)
+plt.plot(t_idbd,idbd*1000)
+plt.plot(t_idbd,rec*1000)
+plt.xlabel('tiempo (s)')
+plt.ylabel('corriente (mA)')
 
+plt.subplot(1,2,2)
+plt.plot(t_idbd,(idbd-rec)*1000)
+
+plt.xlabel('tiempo (s)')
+plt.ylabel('corriente (mA)')
 
 
 
@@ -137,6 +133,11 @@ plt.plot(t_idbd,rec)
 
 #------------------- ------CÁLCULO DE EFICIENCIA EXPERIMENTAL-------------------------
 
+#dado que este mismo analisis se hace para cualquier gas, hay que meter todo esto
+#en una funcion que pida: gas, potencia, duracion, tiempo de inicio y fin.
+
+
+tiempo=np.linspace(0,duracion,len(NO))
 
 pot=60 #ingresar potencia en watts
 
@@ -144,10 +145,12 @@ inicio=22 #poner el minuto en que se encendió la descarga
 
 fin=30  #poner el minuto en que finalizó la descarga
 
-dondeini=np.where(tiempoNO>=inicio)[0][0] # índice donde comienza la descarga
-inicio=tiempoNO[dondeini] #tiempo de inicio medido por la máquina
+tiempo= np.linspace(0,duracion,len(NO))
 
-dondefin=np.where(tiempoNO>=fin)[0][0]#índice donde comienza la descarga
+dondeini=np.where(tiempo>=inicio)[0][0] # índice donde comienza la descarga
+inicio=tiempo[dondeini] #tiempo de inicio medido por la máquina
+
+dondefin=np.where(tiempo>=fin)[0][0]#índice donde comienza la descarga
 
 
 
@@ -175,7 +178,17 @@ print('eficiencia por potencia:',efic,'mol/(kW H)')
 
 
 
+#%%
 
+#LEER UN ARCHIVO CSV
+
+f = open(r'C:\Users\Matías\Documents\GitHub\Tesis\20181005\Concentracion NO.csv', 'rt')
+try:
+    reader = csv.reader(f,dialect='pycoma') #si no se pone el dialect es ',' por defecto
+    for row in reader:
+        print(row)
+finally:
+    f.close()
 
 
 

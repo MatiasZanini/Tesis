@@ -28,7 +28,7 @@ def lapso(inicio,fin):    #devuelve la resta de tiempos en minutos. pide string 
     
     
 #%%------------------------------Ploteo---------------------------------------------
-def ploteo(gas,duracion,nombre):  
+def ploteo_concentracion(gas,duracion,nombre):  
     
     
     puntos=len(gas)
@@ -79,39 +79,80 @@ def acondic(path,fdbd=1/50,fstr=1/50):
     
 def funcaux(t,tper,b,c,d):
     return b*np.cos(2*np.pi/tper*t + c) + d
+
+#%%  ------------Indice del maximo o minimo de un vector--------------
+    
+def indice_max(vector_max):
+    return int(np.mean(np.where(vector_max==max(vector_max))[0]))
+
+def indice_min(vector_min):
+    return int(np.mean(np.where(vector_min==min(vector_min))[0]))
+
+
+#%% -Fitea una funcion a ciertos datos, y devuelve la funcion ajustada, evaluada en esos datos--------------
+    
+
+def fitear(funcion_aux, x_data, y_data, params_opt=None):
+    
+    if params_opt:
+        fit_params, fit_covar = fit(funcion_aux, x_data, y_data, p0=params_opt)
+    else:
+        fit_params, fit_covar = fit(funcion_aux, x_data, y_data)
+    
+    cant_param = len(fit_params)
+    params=np.array([])
+    
+    for ind_param in range(cant_param):
+        params = np.append(params,fit_params[ind_param])
+        
+        
+    return funcion_aux(x_data, *params)
+
     
     
 #%%
     
-def recortar_corriente(t_corr,corr,tper):
+def recortar_corriente(t_corr,corr,tper, niter=30):
     
+    
+    indmax=indice_max(corr)
+    cor_rec = np.copy(corr)
+    for k in range(niter):
+    
+        fiteada = fitear(funcaux, t_corr, cor_rec, ([tper,1,1,1]))   
+        cor_rec=np.array([])
         
-    fiteada_param, fiteada_covar=fit(funcaux, t_corr,corr ,p0=([tper,1,1,1]))
-    
-    fiteada=funcaux(t_corr, fiteada_param[0], fiteada_param[1], fiteada_param[2], fiteada_param[3])
-    
-    indmax=int(np.mean(np.where(corr==max(corr))[0]))
-    
-    
-    cor_rec=np.copy(corr)
-    
-    
-    datoscorte=np.array([])
-    for i in range(-15,16):
-        datoscorte=np.append(datoscorte,(corr[indmax+i]-fiteada[indmax+i]))
-    corte=np.mean(datoscorte)/3
-    
-    for j in range(len(corr)):
+        datoscorte=np.array([])
+       
+        for i in range(-15,16):     #setea la tolerancia para diferenciar pico de ruido
+            datoscorte=np.append(datoscorte,(corr[indmax+i]-fiteada[indmax+i]))
+        corte=np.mean(datoscorte)
         
-        if abs(corr[j]-fiteada[j])>corte:
-            cor_rec[j]=fiteada[j]
+        for j in range(len(corr)):
             
-    fiteada2_param, fiteada2_covar=fit(funcaux,t_corr,cor_rec,p0=([tper,1,1,1]))
-    fiteada2=funcaux(t_corr, fiteada2_param[0], fiteada2_param[1], fiteada2_param[2], fiteada2_param[3])
+            if abs(corr[j]-fiteada[j])>corte:
+                cor_rec=np.append(cor_rec,fiteada[j])
+            else:
+                cor_rec=np.append(cor_rec,corr[j])
+            
     
-    return fiteada2
+    return fitear(funcaux,t_corr,cor_rec,([tper,1,1,1])) , cor_rec
     
+
+#%% ----------------------------------CALCULO DE LA POTENCIA--------------------------
+
 #def potencia
+    
+
+
+
+#%%
+    
+#comentarios:
+
+#cor_rec=np.copy(corr)   el comando np.copy copia la variable en el espacio de memoria, con lo cual no sobreescribe la original
+
+
 
 #en el programa de analisis, no hace falta llamar a recortar. Que potencia ya llame a recortar y listo.    
     
