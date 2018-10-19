@@ -10,7 +10,15 @@ Pusimos la trampa, medimos y llegamos a 252 ppm de NO con 13.4kV despues aumenta
 
 Las mediciones que no especifican voltaje 13.4 son las que hicimos a 15.2kV.
 
-En la medicion de concentracion se vera un primer escalon de equilibrio a 252 ppm que corresponde a los 13.4 kv de entrada.
+En la medicion de concentracion se vera un primer escalon de equilibrio a 252 ppm que corresponde a los 13.4 kv de entrada
+y el otro escalon a 193 ppm correspondiente a los 15.2 kV.
+
+Al principio hay una bajada de concentracion que corresponde a que se prendio unicamente la dbd (con la fuente negativa
+apagada) durante un rato, lo que bajo la concentracion de NO un poco. Despues se la apago y se volvio a esperar a que 
+estabilice. habria que tomar como punto de partida el pico mas alto.
+
+Con baja frecuencia no medimos concentracion de gas. Solo lo medimos con alta frecuencia ya que queriamos ver si podiamos
+mejorar la eficiencia con la trampa.
 
 
 

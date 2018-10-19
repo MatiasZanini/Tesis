@@ -11,3 +11,16 @@ hay que ver cuanta es la eficiencia energetica.
 -analizar una señal del reactor de jorge o de los chicos de labo 6 y 7 con mi programa para descartar errores en la 
 programacion
 
+
+lunes 22/10
+
+-ponerle un tapon de goma a las varillas que permita hacerles fuerza para enroscarlas.
+
+-medir alta y baja frecuencia con el gas sin trampa y el disquito nuevo de alambre mas fino (ya esta colocado).
+
+-TENER MUCHO CUIDADO CON LAS MEDICIONES. RECORDAR QUE SE APENDEAN A "Mediciones 3.csv"  CON LO CUAL VA A QUEDAR UNA 
+MEDICION PEGADA A LA OTRA.
+
+-Como logramos mas dbd con el alambre fino, hay menos streamers que cruzan. Podríamos, entonces, bajar el voltaje de alterna (en alta frecuencia) ya que la dbd se prende antes, mas o menos a los 12kv. Luego, aumentar el voltaje negativo de la fuente de continua.
+
+
