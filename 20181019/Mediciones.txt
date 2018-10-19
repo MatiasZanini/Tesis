@@ -1,0 +1,16 @@
+13.4 kV     252 ppm de NO finales
+
+15.2 kV    193 ppm de NO finales
+
+
+hubo algun tema con la calibracion o lo que sea, que nos hizo empezar con 560 ppm iniciales.
+
+Pusimos la trampa, medimos y llegamos a 252 ppm de NO con 13.4kV despues aumentamos el voltaje a 15.2kV y bajo mucho mas
+(hasta 193 ppm).
+
+Las mediciones que no especifican voltaje 13.4 son las que hicimos a 15.2kV.
+
+En la medicion de concentracion se vera un primer escalon de equilibrio a 252 ppm que corresponde a los 13.4 kv de entrada.
+
+
+
