@@ -1,6 +1,5 @@
 a la izquierda es el voltaje de pico a pico de la señal de entrada. A la derecha es el voltaje de la fuente negativa en kv
 
-
 14 kv    -9.02 kv
 
 10.2kv (posicion 3 del ampli)      -11.3 kv  
@@ -9,8 +8,9 @@ a la izquierda es el voltaje de pico a pico de la señal de entrada. A la derecha
 13.2 kv               -11.3   
 
 
-
-concentracion: primero 14 kv a 9 kv de negativa   despues 10.2kv pp a-11kv de negativa y por ultimo 13.2kv a -11kv de negativa.
+Concentracion NO.csv
+	primer caida correspondiente a 14 kV pp con -9 kv de negativa
+	despues 10.2kv pp a-11kv de negativa y por ultimo 13.2kv a -11kv de negativa.
 
 
 
