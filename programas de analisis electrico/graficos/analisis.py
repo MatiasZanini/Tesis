@@ -73,9 +73,9 @@ print('duración de la medición total:',duracion,'minutos')
 
 func.ploteo_concentracion(NO,duracion,'NO')
 
-#%%-------------------------------------POTENCIA------------------------------------------------------
+#%%--------------------------------------------------POTENCIA------------------------------------------------------
 
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Bobina gas 1.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Mati\Documents\GitHub\Tesis\20181005\Bobina gas 1.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -110,19 +110,40 @@ indmin=int(np.mean(np.where(volt_rec==min(volt_rec))[0]))
 iper=2*abs(indmax-indmin)                       #cantidad de elementos en un periodo
 tper=2*abs(t_volt[indmax]-t_volt[indmin])       #periodo en segundos
 
-fit, rec =func.recortar_corriente(t_idbd,idbd,tper) #guarda la funcion recortada y su fiteo
+
+#%%
+
+potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr,volt,iper,tper)
+
+print('Potencia media en W:', potencia_istr)
+print('Corriente media en mA:', cor_media_istr)
+
+plt.plot(t_istr[:iper],istr_aux[:iper])
+plt.xlabel('tiempo (s)')
+plt.ylabel('Corriente de streamers (mA)')
+
+
+
+#%%
+
+#prueba de recorte
+
+fit, rec =func.recortar_corriente(t_istr,istr,tper,niter=100) #guarda la funcion recortada y su fiteo
 
 plt.subplot(1,2,1)
-plt.plot(t_idbd,idbd*1000)
-plt.plot(t_idbd,rec*1000)
+plt.plot(t_istr,istr*1000)
+plt.plot(t_istr,fit*1000)
 plt.xlabel('tiempo (s)')
 plt.ylabel('corriente (mA)')
 
 plt.subplot(1,2,2)
-plt.plot(t_idbd,(idbd-rec)*1000)
+plt.plot(t_istr,(istr-fit)*1000)
 
 plt.xlabel('tiempo (s)')
 plt.ylabel('corriente (mA)')
+
+
+#la corriente esta dando bien, pero la potencia da bajisima comparado a lo que da en el mathematica
 
 
 

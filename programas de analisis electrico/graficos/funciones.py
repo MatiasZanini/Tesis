@@ -141,9 +141,28 @@ def recortar_corriente(t_corr,corr,tper, niter=30):
 
 #%% ----------------------------------CALCULO DE LA POTENCIA--------------------------
 
-#def potencia
+def potencia(t_pot, cor_pot, v_ac_in, ind_per, t_per, v_dc_in=-9000):
     
+    cor_pot_fit, cor_pot_rec = recortar_corriente(t_pot, cor_pot, t_per)
+    cor_aux = cor_pot - cor_pot_fit
+    vmax = max(v_ac_in)
+    vmin = min(v_ac_in)
+        
+    v_ac_med = (vmax+vmin)/2
+    
+    v_dc = v_ac_med-v_dc_in
+    
+    pot=0.0
+    cor_suma=0.0
+        
+    for ind_pot in range(ind_per):
+        pot += cor_aux[ind_pot]*(v_ac_in[ind_per] - v_ac_med + v_dc)
+        cor_suma += cor_pot[ind_pot]
+    pot_avg = pot/ind_per             #potencia media en W
+    cor_avg = cor_suma/ind_per *1000  #corriente promedio en mA
 
+
+    return pot_avg, cor_avg, cor_aux*1000
 
 
 #%%
