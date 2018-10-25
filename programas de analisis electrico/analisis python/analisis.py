@@ -75,7 +75,7 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 #%%--------------------------------------------------POTENCIA------------------------------------------------------
 
-path=r"C:\Users\Mati\Documents\GitHub\Tesis\20181005\Bobina gas 1.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Bobina gas 1.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -116,11 +116,18 @@ tper=2*abs(t_volt[indmax]-t_volt[indmin])       #periodo en segundos
 potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr,volt,iper,tper)
 
 print('Potencia media en W:', potencia_istr)
-print('Corriente media en mA:', cor_media_istr)
+print('Corriente media en mA:', cor_media_istr*1000)
 
-plt.plot(t_istr[:iper],istr_aux[:iper])
+plt.plot(t_istr[:iper],istr_aux[:iper]*1000)
 plt.xlabel('tiempo (s)')
 plt.ylabel('Corriente de streamers (mA)')
+
+
+
+
+#%%
+
+
 
 
 
