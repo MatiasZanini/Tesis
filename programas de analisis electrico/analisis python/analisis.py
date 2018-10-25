@@ -33,7 +33,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Concentracion NO.csv") as csvfile:
+with open(r"C:\Users\Matías\Documents\GitHub\Tesis\20181009\Concentracion NO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -77,7 +77,7 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Trafo gas 1.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\20181009\Trafo gas 1.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -101,7 +101,7 @@ plt.grid(True)
 
 #%%-----------calcula el periodo y la cantidad de elementos que hay en un periodo
 
-cant_per=4 #cantidad de periodos que hay en la medicion "a ojo"
+cant_per=3 #cantidad de periodos que hay en la medicion "a ojo"
 
 
 
@@ -182,7 +182,7 @@ voltaje_continua = -9000
 
 subpath= 'Trafo gas '
 
-cant_mediciones = 4
+cant_mediciones = 8
 
 pot_istr_tot = np.array([])
 
@@ -199,13 +199,13 @@ for i in range(cant_mediciones):
     
     señales = func.acondic(path_iter) #Indices de señales: tvolt,volt,tidbd,idbd,tistr,istr
     
-    pot_istr_i, coravg_istr_i = func.potencia(señales[4], señales[5],señales[1],iper_iter,tper_iter, v_dc_in = voltaje_continua)[:2]
+    pot_istr_i, coravg_istr_i = func.potencia(señales[4], señales[5],señales[1],iper_iter,tper_iter, v_dc_in = voltaje_continua,altafrec=False)[:2]
     
     pot_istr_tot = np.append(pot_istr_tot, pot_istr_i)
     
     coravg_istr_tot = np.append(coravg_istr_tot, coravg_istr_i)
     
-    pot_idbd_i, coravg_idbd_i = func.potencia(señales[2], señales[3],señales[1],iper_iter,tper_iter, v_dc_in = voltaje_continua)[:2]
+    pot_idbd_i, coravg_idbd_i = func.potencia(señales[2], señales[3],señales[1],iper_iter,tper_iter, v_dc_in = voltaje_continua,altafrec=False)[:2]
     
     pot_idbd_tot = np.append(pot_idbd_tot, pot_idbd_i)
     
@@ -242,9 +242,9 @@ tiempo = np.linspace(0,duracion,len(NO))
 
 potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio=34 #poner el minuto en que se encendió la descarga
+inicio=8 #poner el minuto en que se encendió la descarga
 
-fin=39  #poner el minuto en que finalizó la descarga
+fin=18  #poner el minuto en que finalizó la descarga
 
 tiempo= np.linspace(0,duracion,len(NO))
 
