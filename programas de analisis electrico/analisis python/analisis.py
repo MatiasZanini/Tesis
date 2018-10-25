@@ -77,7 +77,7 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Bobina gas 1.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Trafo gas 1.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -101,7 +101,7 @@ plt.grid(True)
 
 #%%-----------calcula el periodo y la cantidad de elementos que hay en un periodo
 
-cant_per=3 #cantidad de periodos que hay en la medicion "a ojo"
+cant_per=4 #cantidad de periodos que hay en la medicion "a ojo"
 
 
 
@@ -115,7 +115,7 @@ tper=2*abs(t_volt[indmax]-t_volt[indmin])       #periodo en segundos
 
 #%% calculo de las potencias
 
-potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr,volt,iper,tper)
+potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr,volt,iper,tper,altafrec=False)
 
 print('Potencia media de streamers en W:', potencia_istr)
 print('Corriente media de streamers en mA:', cor_media_istr*1000)
@@ -127,7 +127,7 @@ plt.ylabel('Corriente de streamers (mA)')
 
 #%%
 
-potencia_idbd, cor_media_idbd, idbd_aux = func.potencia(t_idbd, idbd,volt,iper,tper)
+potencia_idbd, cor_media_idbd, idbd_aux = func.potencia(t_idbd, idbd,volt,iper,tper,altafrec=False)
 
 print('Potencia media de DBD en W:', potencia_idbd)
 print('Corriente media de DBD en mA:', cor_media_idbd*1000)
@@ -180,7 +180,7 @@ tper_iter = 2*abs(t_volt[indmax_iter]-t_volt[indmin_iter])       #periodo en seg
 
 voltaje_continua = -9000
 
-subpath= 'Bobina gas '
+subpath= 'Trafo gas '
 
 cant_mediciones = 4
 
@@ -242,9 +242,9 @@ tiempo = np.linspace(0,duracion,len(NO))
 
 potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio=21 #poner el minuto en que se encendió la descarga
+inicio=34 #poner el minuto en que se encendió la descarga
 
-fin=30  #poner el minuto en que finalizó la descarga
+fin=39  #poner el minuto en que finalizó la descarga
 
 tiempo= np.linspace(0,duracion,len(NO))
 
