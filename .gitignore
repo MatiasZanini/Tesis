@@ -102,3 +102,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# carpetas de analisis
+
+Graficos y analisis/
+
+
+
+
+
