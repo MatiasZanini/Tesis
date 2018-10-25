@@ -1,3 +1,8 @@
+
+Mediciones hechas con alambre fino
+
+
+
 a la izquierda es el voltaje de pico a pico de la señal de entrada. A la derecha es el voltaje de la fuente negativa en kv
 
 14 kv    -9.02 kv

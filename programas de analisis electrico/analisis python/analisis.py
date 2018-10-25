@@ -18,7 +18,7 @@ reload(func)
 
 #%%
 
-#------------------------OBTENER CONCENTRACION DE GASES-------------------------
+#------------------------------ CONCENTRACION DE GASES-------------------------
 
 
 csv.register_dialect('pycoma', delimiter=';')
@@ -33,7 +33,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\20181022\Concentracion NO.csv") as csvfile:
+with open(r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Concentracion NO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -75,57 +75,70 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 #%%--------------------------------------------------POTENCIA------------------------------------------------------
 
+
+# Ploteo de las mediciones crudas y carga de datos
 path=r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\Bobina gas 1.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
 plt.subplot(3,1,1)
-plt.plot(t_volt,volt)
+plt.plot(t_volt*1000,volt)
 plt.xlabel('tiempo (s)')
 plt.ylabel('Voltaje entrada (V)')
 plt.grid(True)
 
 plt.subplot(3,1,2)
-plt.plot(t_idbd,idbd*1000)
+plt.plot(t_idbd*1000,idbd*1000)
 plt.xlabel('tiempo (s)')
 plt.ylabel('Corriente de DBD (mA)')
 plt.grid(True)
 
 plt.subplot(3,1,3)
-plt.plot(t_istr,istr*1000)
-plt.xlabel('tiempo (s)')
+plt.plot(t_istr*1000,istr*1000)
+plt.xlabel('tiempo (ms)')
 plt.ylabel('Corriente de streamers (mA)')
 plt.grid(True)
 
-#%%
+#%%-----------calcula el periodo y la cantidad de elementos que hay en un periodo
 
 cant_per=3 #cantidad de periodos que hay en la medicion "a ojo"
 
 
 
 volt_rec=volt[0:(int((len(volt)/cant_per)+1))]
-indmax=int(np.mean(np.where(volt_rec==max(volt_rec))[0]))
-indmin=int(np.mean(np.where(volt_rec==min(volt_rec))[0]))
+indmax=func.indice_max(volt_rec)
+indmin=func.indice_min(volt_rec)
 
 iper=2*abs(indmax-indmin)                       #cantidad de elementos en un periodo
 tper=2*abs(t_volt[indmax]-t_volt[indmin])       #periodo en segundos
 
 
-#%%
+#%% calculo de las potencias
 
 potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr,volt,iper,tper)
 
-print('Potencia media en W:', potencia_istr)
-print('Corriente media en mA:', cor_media_istr*1000)
+print('Potencia media de streamers en W:', potencia_istr)
+print('Corriente media de streamers en mA:', cor_media_istr*1000)
 
 plt.plot(t_istr[:iper],istr_aux[:iper]*1000)
 plt.xlabel('tiempo (s)')
 plt.ylabel('Corriente de streamers (mA)')
 
 
-
-
 #%%
+
+potencia_idbd, cor_media_idbd, idbd_aux = func.potencia(t_idbd, idbd,volt,iper,tper)
+
+print('Potencia media de DBD en W:', potencia_idbd)
+print('Corriente media de DBD en mA:', cor_media_idbd*1000)
+
+plt.plot(t_istr[:iper],idbd_aux[:iper]*1000)
+plt.xlabel('tiempo (s)')
+plt.ylabel('Corriente de DBD (mA)')
+
+
+
+
 
 
 
@@ -152,6 +165,66 @@ plt.ylabel('corriente (mA)')
 
 #la corriente esta dando bien, pero la potencia da bajisima comparado a lo que da en el mathematica
 
+#%%---------------------------POTENCIA PROMEDIADA ENTRE VARIAS MEDICIONES-----------------
+
+cant_per_iter=3 #cantidad de periodos que hay en la medicion "a ojo"
+
+
+
+volt_rec_iter = volt[0:(int((len(volt)/cant_per_iter)+1))]
+indmax_iter = func.indice_max(volt_rec_iter)
+indmin_iter = func.indice_min(volt_rec_iter)
+
+iper_iter = 2*abs(indmax_iter-indmin_iter)                       #cantidad de elementos en un periodo
+tper_iter = 2*abs(t_volt[indmax_iter]-t_volt[indmin_iter])       #periodo en segundos
+
+voltaje_continua = -9000
+
+subpath= 'Bobina gas '
+
+cant_mediciones = 4
+
+pot_istr_tot = np.array([])
+
+coravg_istr_tot = np.array([])
+
+pot_idbd_tot = np.array([])
+
+coravg_idbd_tot = np.array([])
+
+
+for i in range(cant_mediciones):
+    
+    path_iter = r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\{}{}.csv".format(subpath, i+1)
+    
+    señales = func.acondic(path_iter) #Indices de señales: tvolt,volt,tidbd,idbd,tistr,istr
+    
+    pot_istr_i, coravg_istr_i = func.potencia(señales[4], señales[5],señales[1],iper_iter,tper_iter, v_dc_in = voltaje_continua)[:2]
+    
+    pot_istr_tot = np.append(pot_istr_tot, pot_istr_i)
+    
+    coravg_istr_tot = np.append(coravg_istr_tot, coravg_istr_i)
+    
+    pot_idbd_i, coravg_idbd_i = func.potencia(señales[2], señales[3],señales[1],iper_iter,tper_iter, v_dc_in = voltaje_continua)[:2]
+    
+    pot_idbd_tot = np.append(pot_idbd_tot, pot_idbd_i)
+    
+    coravg_idbd_tot = np.append(coravg_idbd_tot, coravg_idbd_i)
+    
+potencia_istr = np.mean(pot_istr_tot)
+
+potencia_idbd = np.mean(pot_idbd_tot)
+
+cor_media_istr = np.mean(coravg_istr_tot)
+
+cor_media_idbd = np.mean(coravg_idbd_tot)
+
+print('Potencia media de streamers en W:', potencia_istr)
+print('Corriente media de streamers en mA:', cor_media_istr*1000)
+
+print('Potencia media de DBD en W:', potencia_idbd)
+print('Corriente media de DBD en mA:', cor_media_idbd*1000)
+
 
 
 
@@ -165,11 +238,11 @@ plt.ylabel('corriente (mA)')
 #en una funcion que pida: gas, potencia, duracion, tiempo de inicio y fin.
 
 
-tiempo=np.linspace(0,duracion,len(NO))
+tiempo = np.linspace(0,duracion,len(NO))
 
-pot=60 #ingresar potencia en watts
+potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio=22 #poner el minuto en que se encendió la descarga
+inicio=21 #poner el minuto en que se encendió la descarga
 
 fin=30  #poner el minuto en que finalizó la descarga
 
@@ -188,9 +261,9 @@ cf= min(NO[dondeini:dondefin]) #concentracion final en ppm
 
 efic_porcentual= (ci-cf)/ci *100 #eficiencia porcentual absoluta
 
-caudalprom=np.mean(caudal)
+caudalprom=np.mean(caudal[dondeini:dondefin])
 
-efic = (caudalprom*(ci-cf)*1e-3 * 0.0407)/pot #eficiencia relativa a la potencia suministrada en mol/(kW H)
+efic = (caudalprom*(ci-cf)*1e-3 * 0.0407)/potencia_final #eficiencia relativa a la potencia suministrada en mol/(kW H)
 
 print('eficiencia porcentual:', efic_porcentual, '%')
 print('eficiencia por potencia:',efic,'mol/(kW H)')
