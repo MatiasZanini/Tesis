@@ -1,0 +1,5 @@
+Las mediciones de baja frecuencia que tienen puesto el peak detect tienen el problema de que detectan un ruido de 1mA constante. Eso suma una potencia no deseada.
+
+Estamos viendo que el de baja frecuencia tiene una potencia de streamers de alrededor de 3 W mientras que para alta frecuencia la potencia es de alrededor de 0.7 W.
+
+Queda corregir ese ruido electrico en las mediciones de trafo, pero dudo que logremos bajar tanto la potencia.

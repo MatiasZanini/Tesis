@@ -33,7 +33,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\20181009\Concentracion NO.csv") as csvfile:
+with open(r"C:\Users\Matías\Documents\GitHub\Tesis\20181022\Concentracion NO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -77,7 +77,7 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\20181009\Trafo gas 1.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\20181026\Trafo pk detect 2.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -101,7 +101,7 @@ plt.grid(True)
 
 #%%-----------calcula el periodo y la cantidad de elementos que hay en un periodo
 
-cant_per=3 #cantidad de periodos que hay en la medicion "a ojo"
+cant_per=3 #cantidad de periodos que hay en la medicion "a ojo". Es posible tener que poner esa cantidad +1
 
 
 
@@ -120,21 +120,23 @@ potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr,volt,iper,t
 print('Potencia media de streamers en W:', potencia_istr)
 print('Corriente media de streamers en mA:', cor_media_istr*1000)
 
-plt.plot(t_istr[:iper],istr_aux[:iper]*1000)
-plt.xlabel('tiempo (s)')
+plt.plot(t_istr[:iper]*1000,istr_aux[:iper]*1000)
+plt.xlabel('tiempo (ms)')
 plt.ylabel('Corriente de streamers (mA)')
+plt.grid()
 
 
 #%%
 
-potencia_idbd, cor_media_idbd, idbd_aux = func.potencia(t_idbd, idbd,volt,iper,tper,altafrec=False)
+potencia_idbd, cor_media_idbd, idbd_aux = func.potencia(t_idbd, idbd,volt,iper,tper)
 
 print('Potencia media de DBD en W:', potencia_idbd)
 print('Corriente media de DBD en mA:', cor_media_idbd*1000)
 
-plt.plot(t_istr[:iper],idbd_aux[:iper]*1000)
-plt.xlabel('tiempo (s)')
+plt.plot(t_istr[:iper]*1000,idbd_aux[:iper]*1000)
+plt.xlabel('tiempo (ms)')
 plt.ylabel('Corriente de DBD (mA)')
+plt.grid()
 
 
 
@@ -167,7 +169,7 @@ plt.ylabel('corriente (mA)')
 
 #%%---------------------------POTENCIA PROMEDIADA ENTRE VARIAS MEDICIONES-----------------
 
-cant_per_iter=3 #cantidad de periodos que hay en la medicion "a ojo"
+cant_per_iter=6 #cantidad de periodos que hay en la medicion "a ojo"
 
 
 
@@ -178,11 +180,11 @@ indmin_iter = func.indice_min(volt_rec_iter)
 iper_iter = 2*abs(indmax_iter-indmin_iter)                       #cantidad de elementos en un periodo
 tper_iter = 2*abs(t_volt[indmax_iter]-t_volt[indmin_iter])       #periodo en segundos
 
-voltaje_continua = -9000
+voltaje_continua = -11300
 
-subpath= 'Trafo gas '
+subpath= 'Bobina gas 14vpp -9kv  '
 
-cant_mediciones = 8
+cant_mediciones = 3
 
 pot_istr_tot = np.array([])
 
@@ -195,17 +197,17 @@ coravg_idbd_tot = np.array([])
 
 for i in range(cant_mediciones):
     
-    path_iter = r"C:\Users\Matías\Documents\GitHub\Tesis\20181005\{}{}.csv".format(subpath, i+1)
+    path_iter = r"C:\Users\Matías\Documents\GitHub\Tesis\20181022\{}{}.csv".format(subpath, i+1)
     
     señales = func.acondic(path_iter) #Indices de señales: tvolt,volt,tidbd,idbd,tistr,istr
     
-    pot_istr_i, coravg_istr_i = func.potencia(señales[4], señales[5],señales[1],iper_iter,tper_iter, v_dc_in = voltaje_continua,altafrec=False)[:2]
+    pot_istr_i, coravg_istr_i = func.potencia(señales[4], señales[5],señales[1],iper_iter,tper_iter, v_dc_in = voltaje_continua)[:2]
     
     pot_istr_tot = np.append(pot_istr_tot, pot_istr_i)
     
     coravg_istr_tot = np.append(coravg_istr_tot, coravg_istr_i)
     
-    pot_idbd_i, coravg_idbd_i = func.potencia(señales[2], señales[3],señales[1],iper_iter,tper_iter, v_dc_in = voltaje_continua,altafrec=False)[:2]
+    pot_idbd_i, coravg_idbd_i = func.potencia(señales[2], señales[3],señales[1],iper_iter,tper_iter, v_dc_in = voltaje_continua)[:2]
     
     pot_idbd_tot = np.append(pot_idbd_tot, pot_idbd_i)
     
@@ -242,9 +244,9 @@ tiempo = np.linspace(0,duracion,len(NO))
 
 potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio=8 #poner el minuto en que se encendió la descarga
+inicio=15 #poner el minuto en que se encendió la descarga
 
-fin=18  #poner el minuto en que finalizó la descarga
+fin=22  #poner el minuto en que finalizó la descarga
 
 tiempo= np.linspace(0,duracion,len(NO))
 

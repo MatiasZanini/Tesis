@@ -1,0 +1,3 @@
+-vimos que no hay dependencia con el flujo del gas (los tiempos de creacion y destruccion de especies son mucho mas cortos que el paso del gas)
+
+-vimos que para baja frecuencia la potencia es casi la misma, pero se generan menos especies por unidad de tiempo. Esto es porque precisamente a baja frecuencia por unidad de tiempo hay menos periodos de señal. En consecuencia hay menos streamers encendidos y menos especies activas creadas.

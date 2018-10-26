@@ -24,3 +24,6 @@ MEDICION PEGADA A LA OTRA.
 -Como logramos mas dbd con el alambre fino, hay menos streamers que cruzan. Podríamos, entonces, bajar el voltaje de alterna (en alta frecuencia) ya que la dbd se prende antes, mas o menos a los 12kv. Luego, aumentar el voltaje negativo de la fuente de continua.
 
 
+-MUY IMPORTANTE: no guardar mas mediciones en el repositorio. Guardarlas en un drive, y despues guardarlas en la carpeta Mediciones (dentro del gitignore). El repo ya esta a la mitad de la capacidad.
+
+
