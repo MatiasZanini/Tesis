@@ -1,0 +1,9 @@
+Probamos solo señal electrica sin gas, con baja frecuencia y disco con alambre fino.
+Las puntas con las que mediamos estaban mal antes. Ahora chequeamos que la fija de x10 en realidad mide x1.
+
+Ch1 voltaje ch2 dbd ch3 streamers.
+
+Estamos probando adquirir en modo deteccion de picos para baja frecuencia.
+
+Desde Bobina pk detect 1 hasta 4 se midio con la fuente de continua a -9.02kV
+Desde Bobina pk detect 5 en adelante se midio con la fuente a -11.7 kV
