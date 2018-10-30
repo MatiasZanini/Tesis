@@ -112,31 +112,49 @@ def fitear(funcion_aux, x_data, y_data, params_opt=None):
     
 #%%
     
-def recortar_corriente(t_corr,corr,tper, niter=30):
-    
+def recortar_corriente(t_corr,corr,tper, niter=30, altafrec_rec=True):
     
     indmax=indice_max(corr)
     cor_rec = np.copy(corr)
-    for k in range(niter):
-    
-        fiteada = fitear(funcaux, t_corr, cor_rec, ([tper,1,1,1]))   
-        cor_rec=np.array([])
+    if altafrec_rec:
         
+        for k in range(niter):
+        
+            fiteada = fitear(funcaux, t_corr, cor_rec, ([tper,1,1,1]))   
+            cor_rec=np.array([])
+            
+            datoscorte=np.array([])
+           
+            for i in range(-15,16):     #setea la tolerancia para diferenciar pico de ruido
+                datoscorte=np.append(datoscorte,(corr[indmax+i]-fiteada[indmax+i]))
+            corte=np.mean(datoscorte)/3
+            
+            for j in range(len(corr)):
+                
+                if abs(corr[j]-fiteada[j])>corte:
+                    cor_rec=np.append(cor_rec,fiteada[j])
+                else:
+                    cor_rec=np.append(cor_rec,corr[j])
+                    
+        return fitear(funcaux,t_corr,cor_rec,([tper,1,1,1])) , cor_rec
+    
+    else:
+        cor_rec=np.array([])
         datoscorte=np.array([])
-       
+           
         for i in range(-15,16):     #setea la tolerancia para diferenciar pico de ruido
-            datoscorte=np.append(datoscorte,(corr[indmax+i]-fiteada[indmax+i]))
-        corte=np.mean(datoscorte)/3
+            datoscorte = np.append(datoscorte,corr[indmax+i])
+        corte=np.mean(datoscorte)
         
         for j in range(len(corr)):
             
-            if abs(corr[j]-fiteada[j])>corte:
-                cor_rec=np.append(cor_rec,fiteada[j])
+            if abs(corr[j])>corte:
+                cor_rec=np.append(cor_rec,0.0)
             else:
                 cor_rec=np.append(cor_rec,corr[j])
             
     
-    return fitear(funcaux,t_corr,cor_rec,([tper,1,1,1])) , cor_rec
+        return cor_rec
     
 
 #%% ----------------------------------CALCULO DE LA POTENCIA--------------------------
@@ -162,7 +180,7 @@ def potencia(t_pot, cor_pot, v_ac_in, ind_per, t_per, v_dc_in = (-9000), altafre
         pot_avg = pot/ind_per             #potencia media en W
         cor_avg = cor_suma/ind_per   #corriente promedio en A
     else:
-        cor_aux = np.copy(cor_pot)
+        cor_aux = cor_pot - recortar_corriente(t_pot, cor_pot, t_per,niter=50, altafrec_rec=False)
         vmax = max(v_ac_in)
         vmin = min(v_ac_in)
             

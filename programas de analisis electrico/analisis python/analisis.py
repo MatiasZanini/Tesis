@@ -77,7 +77,7 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\20181026\Trafo pk detect 2.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Mati\Documents\GitHub\Tesis\20181026\Trafo pk detect 6.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -115,7 +115,7 @@ tper=2*abs(t_volt[indmax]-t_volt[indmin])       #periodo en segundos
 
 #%% calculo de las potencias
 
-potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr,volt,iper,tper,altafrec=False)
+potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr,volt,iper,tper, altafrec=False)
 
 print('Potencia media de streamers en W:', potencia_istr)
 print('Corriente media de streamers en mA:', cor_media_istr*1000)
