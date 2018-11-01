@@ -89,6 +89,18 @@ def indice_min(vector_min):
     return int(np.mean(np.where(vector_min==min(vector_min))[0]))
 
 
+#%%
+def calculo_per(cant_per, t_volt, voltaje_per):    
+    volt_rec = voltaje_per[0:(int((len(voltaje_per)/cant_per)+1))]
+    indmax = indice_max(volt_rec)
+    indmin = indice_min(volt_rec)
+    
+    iper = 2*abs(indmax-indmin)                       #cantidad de elementos en un periodo
+    tper = 2*abs(t_volt[indmax]-t_volt[indmin])       #periodo en segundos
+    
+    return iper, tper
+
+
 #%% -Fitea una funcion a ciertos datos, y devuelve la funcion ajustada, evaluada en esos datos--------------
     
 
@@ -159,11 +171,13 @@ def recortar_corriente(t_corr,corr,tper, niter=30, altafrec_rec=True):
 
 #%% ----------------------------------CALCULO DE LA POTENCIA--------------------------
 
-def potencia(t_pot, cor_pot, v_ac_in, ind_per, t_per, v_dc_in = (-9000), altafrec=True):
+def potencia(t_pot, cor_pot, v_ac_in, cant_periodos, v_dc_in = (-9000), altafrec=True, streamer= True):
+    
+    ind_per, t_per = calculo_per(cant_periodos, t_pot, v_ac_in)
     
     if altafrec:
-        cor_pot_fit, cor_pot_rec = recortar_corriente(t_pot, cor_pot, t_per,niter=50)
-        cor_aux = cor_pot - cor_pot_rec
+        cor_pot_fit, cor_pot_rec = recortar_corriente(t_pot, cor_pot, t_per, niter=50)
+        cor_aux = np.copy(cor_pot) - np.copy(cor_pot_rec)
         vmax = max(v_ac_in)
         vmin = min(v_ac_in)
             
@@ -173,10 +187,16 @@ def potencia(t_pot, cor_pot, v_ac_in, ind_per, t_per, v_dc_in = (-9000), altafre
         
         pot=0.0
         cor_suma=0.0
-                
-        for ind_pot in range(ind_per):
-            pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med + v_dc)
-            cor_suma += cor_pot[ind_pot]
+        if streamer:        
+            for ind_pot in range(ind_per):
+            
+                pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med + v_dc)*0.5*(1+np.sign(cor_aux[ind_pot]))
+                cor_suma += cor_pot[ind_pot]*0.5*(1+np.sign(cor_aux[ind_pot]))
+        else:
+            for ind_pot in range(ind_per):
+                pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med + v_dc)
+                cor_suma += cor_pot[ind_pot]
+            
         pot_avg = pot/ind_per             #potencia media en W
         cor_avg = cor_suma/ind_per   #corriente promedio en A
     else:
@@ -191,9 +211,14 @@ def potencia(t_pot, cor_pot, v_ac_in, ind_per, t_per, v_dc_in = (-9000), altafre
         pot=0.0
         cor_suma=0.0
                 
-        for ind_pot in range(ind_per):
-            pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med + v_dc)
-            cor_suma += cor_pot[ind_pot]
+        if streamer:
+            for ind_pot in range(ind_per):
+                pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med + v_dc)*0.5*(1+np.sign(cor_aux[ind_pot]))
+                cor_suma += cor_pot[ind_pot]*0.5*(1+np.sign(cor_aux[ind_pot]))
+        else:
+            for ind_pot in range(ind_per):
+                pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med + v_dc)
+                cor_suma += cor_pot[ind_pot]
         pot_avg = pot/ind_per             #potencia media en W
         cor_avg = cor_suma/ind_per   #corriente promedio en A
     

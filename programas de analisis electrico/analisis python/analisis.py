@@ -77,7 +77,7 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Mati\Documents\GitHub\Tesis\20181026\Trafo pk detect 6.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\20181026\Bobina pk detect 5.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -99,23 +99,12 @@ plt.xlabel('tiempo (ms)')
 plt.ylabel('Corriente de streamers (mA)')
 plt.grid(True)
 
-#%%-----------calcula el periodo y la cantidad de elementos que hay en un periodo
-
-cant_per=3 #cantidad de periodos que hay en la medicion "a ojo". Es posible tener que poner esa cantidad +1
-
-
-
-volt_rec=volt[0:(int((len(volt)/cant_per)+1))]
-indmax=func.indice_max(volt_rec)
-indmin=func.indice_min(volt_rec)
-
-iper=2*abs(indmax-indmin)                       #cantidad de elementos en un periodo
-tper=2*abs(t_volt[indmax]-t_volt[indmin])       #periodo en segundos
-
 
 #%% calculo de las potencias
 
-potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr,volt,iper,tper, altafrec=False)
+iper, tper = func.calculo_per(3, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
+
+potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr, volt, 3,  v_dc_in=-11700 )
 
 print('Potencia media de streamers en W:', potencia_istr)
 print('Corriente media de streamers en mA:', cor_media_istr*1000)
@@ -127,8 +116,9 @@ plt.grid()
 
 
 #%%
+iper, tper = func.calculo_per(3, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
 
-potencia_idbd, cor_media_idbd, idbd_aux = func.potencia(t_idbd, idbd,volt,iper,tper)
+potencia_idbd, cor_media_idbd, idbd_aux = func.potencia(t_idbd, idbd,volt,3, v_dc_in=-11700, streamer=False )
 
 print('Potencia media de DBD en W:', potencia_idbd)
 print('Corriente media de DBD en mA:', cor_media_idbd*1000)
