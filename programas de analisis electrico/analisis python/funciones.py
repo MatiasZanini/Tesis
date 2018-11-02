@@ -168,6 +168,9 @@ def recortar_corriente(t_corr,corr,tper, niter=30, altafrec_rec=True):
     
         return cor_rec
     
+    # Tener en cuenta que es  posible que haya que dividir el corte por 2 o 3 dependiendo
+    #de la señal. Habría que ver una forma de relativizar el corte a partir de la amplitud
+    #de la señal.
 
 #%% ----------------------------------CALCULO DE LA POTENCIA--------------------------
 
