@@ -100,11 +100,18 @@ plt.ylabel('Corriente de streamers (mA)')
 plt.grid(True)
 
 
-#%% calculo de las potencias
+#%% CALCULO DE LAS POTENCIAS
+cant_periodos=7
 
-iper, tper = func.calculo_per(3, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
+tolerancia_picos= 3 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
-potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr, volt, 3,  v_dc_in=-9020 )
+fuente_continua= -9.03 #en kV
+
+alta_frecuencia=False
+
+iper, tper = func.calculo_per(cant_periodos, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
+
+potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr, volt, cant_periodos, altafrec=alta_frecuencia,  v_dc_in=fuente_continua*1000 , tolerancia_corte=tolerancia_picos)
 
 print('Potencia media de streamers en W:', potencia_istr)
 print('Corriente media de streamers en mA:', cor_media_istr*1000)
@@ -116,9 +123,11 @@ plt.grid()
 
 
 #%%
-iper, tper = func.calculo_per(3, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
+iper, tper = func.calculo_per(cant_periodos, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
 
-potencia_idbd, cor_media_idbd, idbd_aux = func.potencia(t_idbd, idbd,volt,3, v_dc_in=-9020, streamer=False )
+tolerancia_picos= 1/3  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+
+potencia_idbd, cor_media_idbd, idbd_aux = func.potencia(t_idbd, idbd,volt,cant_periodos, v_dc_in=fuente_continua*1000, altafrec=alta_frecuencia, streamer=False , tolerancia_corte=tolerancia_picos)
 
 print('Potencia media de DBD en W:', potencia_idbd)
 print('Corriente media de DBD en mA:', cor_media_idbd*1000)
@@ -159,11 +168,15 @@ plt.ylabel('corriente (mA)')
 
 #%%---------------------------POTENCIA PROMEDIADA ENTRE VARIAS MEDICIONES-----------------
 
-cant_per_iter=5 #cantidad de periodos que hay en la medicion "a ojo"
+cant_per_iter=7 #cantidad de periodos que hay en la medicion "a ojo"
 
-voltaje_continua = -9020 #indicar voltaje de la fuente externa en volts
+voltaje_continua = -9.03 #indicar voltaje de la fuente externa en kilovolts
 
 alta_frec = True  # indicar si se trata de una medicion de alta frecuencia (True) o baja (False).
+
+tolerancia_corte_str= 3  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+
+tolerancia_corte_dbd= 1/3
 
 subpath= 'Bobina gas '  #indicar nombre generico de las mediciones
 
@@ -186,13 +199,13 @@ for i in range(inicio_med,fin_med+1):
     
     señales = func.acondic(path_iter) #Indices de señales: tvolt,volt,tidbd,idbd,tistr,istr
     
-    pot_istr_i, coravg_istr_i = func.potencia(señales[4], señales[5],señales[1], cant_per_iter, v_dc_in = voltaje_continua,altafrec=alta_frec, streamer= True)[:2]
+    pot_istr_i, coravg_istr_i = func.potencia(señales[4], señales[5],señales[1], cant_per_iter, v_dc_in = voltaje_continua*1000,altafrec=alta_frec, streamer= True, tolerancia_corte=tolerancia_corte_str)[:2]
     
     pot_istr_tot = np.append(pot_istr_tot, pot_istr_i)
     
     coravg_istr_tot = np.append(coravg_istr_tot, coravg_istr_i)
     
-    pot_idbd_i, coravg_idbd_i = func.potencia(señales[2], señales[3],señales[1],cant_per_iter, v_dc_in = voltaje_continua, altafrec=alta_frec, streamer= False)[:2]
+    pot_idbd_i, coravg_idbd_i = func.potencia(señales[2], señales[3],señales[1],cant_per_iter, v_dc_in = voltaje_continua*1000, altafrec=alta_frec, streamer= False, tolerancia_corte=tolerancia_corte_dbd)[:2]
     
     pot_idbd_tot = np.append(pot_idbd_tot, pot_idbd_i)
     
@@ -225,13 +238,11 @@ print('Corriente media de DBD en mA:', cor_media_idbd*1000)
 #en una funcion que pida: gas, potencia, duracion, tiempo de inicio y fin.
 
 
-tiempo = np.linspace(0,duracion,len(NO))
-
 potencia_final= potencia_idbd + potencia_istr #en watts
 
 inicio=37 #poner el minuto en que se encendió la descarga
 
-fin=47  #poner el minuto en que finalizó la descarga
+fin=46  #poner el minuto en que finalizó la descarga
 
 tiempo= np.linspace(0,duracion,len(NO))
 

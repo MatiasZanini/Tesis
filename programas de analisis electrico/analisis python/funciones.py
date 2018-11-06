@@ -124,7 +124,7 @@ def fitear(funcion_aux, x_data, y_data, params_opt=None):
     
 #%%
     
-def recortar_corriente(t_corr,corr,tper, niter=30, altafrec_rec=True):
+def recortar_corriente(t_corr,corr,tper, niter=30, altafrec_rec=True, atenuar_corte=1):
     
     indmax=indice_max(corr)
     cor_rec = np.copy(corr)
@@ -139,7 +139,7 @@ def recortar_corriente(t_corr,corr,tper, niter=30, altafrec_rec=True):
            
             for i in range(-15,16):     #setea la tolerancia para diferenciar pico de ruido
                 datoscorte=np.append(datoscorte,(corr[indmax+i]-fiteada[indmax+i]))
-            corte=np.mean(datoscorte)/3
+            corte=np.mean(datoscorte)/atenuar_corte
             
             for j in range(len(corr)):
                 
@@ -156,7 +156,7 @@ def recortar_corriente(t_corr,corr,tper, niter=30, altafrec_rec=True):
            
         for i in range(-15,16):     #setea la tolerancia para diferenciar pico de ruido
             datoscorte = np.append(datoscorte,corr[indmax+i])
-        corte=np.mean(datoscorte)
+        corte=np.mean(datoscorte)/atenuar_corte
         
         for j in range(len(corr)):
             
@@ -174,12 +174,12 @@ def recortar_corriente(t_corr,corr,tper, niter=30, altafrec_rec=True):
 
 #%% ----------------------------------CALCULO DE LA POTENCIA--------------------------
 
-def potencia(t_pot, cor_pot, v_ac_in, cant_periodos, v_dc_in = (-9000), altafrec=True, streamer= True):
+def potencia(t_pot, cor_pot, v_ac_in, cant_periodos, v_dc_in = (-9000), altafrec=True, streamer= True,tolerancia_corte=1):
     
     ind_per, t_per = calculo_per(cant_periodos, t_pot, v_ac_in)
     
     if altafrec:
-        cor_pot_fit, cor_pot_rec = recortar_corriente(t_pot, cor_pot, t_per, niter=50)
+        cor_pot_fit, cor_pot_rec = recortar_corriente(t_pot, cor_pot, t_per, niter=50, atenuar_corte=tolerancia_corte)
         cor_aux = np.copy(cor_pot) - np.copy(cor_pot_rec)
         vmax = max(v_ac_in)
         vmin = min(v_ac_in)
@@ -203,7 +203,7 @@ def potencia(t_pot, cor_pot, v_ac_in, cant_periodos, v_dc_in = (-9000), altafrec
         pot_avg = pot/ind_per             #potencia media en W
         cor_avg = cor_suma/ind_per   #corriente promedio en A
     else:
-        cor_aux = cor_pot - recortar_corriente(t_pot, cor_pot, t_per,niter=50, altafrec_rec=False)
+        cor_aux = cor_pot - recortar_corriente(t_pot, cor_pot, t_per,niter=50, altafrec_rec=False, atenuar_corte=tolerancia_corte)
         vmax = max(v_ac_in)
         vmin = min(v_ac_in)
             
