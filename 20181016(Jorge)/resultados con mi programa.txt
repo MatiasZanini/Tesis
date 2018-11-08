@@ -1,7 +1,7 @@
-potencia streamers= 5.46 W
+potencia streamers= 5.81 W
 
 corriente media streamers= 0.47 mA
 
-potencia dbd= -2.46 W
+potencia dbd= -2.63 W
 
 corriente media dbd= -0.07 mA
