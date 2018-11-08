@@ -54,7 +54,7 @@ with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Concentr
             NOx=np.append(NOx,float(arr[4]))
             caudal=np.append(caudal,float(arr[5]))
             
-#%%
+
 ti=matriz[2][0].split(' ')[1]                #encuentra el tiempo inicial en formato stirng
 tf=matriz[len(matriz)-1][0].split(' ')[1]    #encuentra el tiempo final en formato string
 
@@ -101,13 +101,13 @@ plt.grid(True)
 
 
 #%% CALCULO DE LAS POTENCIAS
-cant_periodos=7
+cant_periodos=3
 
 tolerancia_picos= 3 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
 fuente_continua= -9.03 #en kV
 
-alta_frecuencia=False
+alta_frecuencia=True
 
 iper, tper = func.calculo_per(cant_periodos, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
 
@@ -178,46 +178,16 @@ tolerancia_corte_str= 3  # si es >1 aumentara la cantidad de picos reconocidos c
 
 tolerancia_corte_dbd= 1/3
 
+path = r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102"
+
 subpath= 'Bobina gas '  #indicar nombre generico de las mediciones
 
 inicio_med = 1 # indicar primer numero de la tira de mediciones
 
 fin_med = 4 # indicar ultimo numero de la tira de mediciones
 
-pot_istr_tot = np.array([])
-
-coravg_istr_tot = np.array([])
-
-pot_idbd_tot = np.array([])
-
-coravg_idbd_tot = np.array([])
-
-
-for i in range(inicio_med,fin_med+1):
     
-    path_iter = r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\{}{}.csv".format(subpath, i)
-    
-    señales = func.acondic(path_iter) #Indices de señales: tvolt,volt,tidbd,idbd,tistr,istr
-    
-    pot_istr_i, coravg_istr_i = func.potencia(señales[4], señales[5],señales[1], cant_per_iter, v_dc_in = voltaje_continua*1000,altafrec=alta_frec, streamer= True, tolerancia_corte=tolerancia_corte_str)[:2]
-    
-    pot_istr_tot = np.append(pot_istr_tot, pot_istr_i)
-    
-    coravg_istr_tot = np.append(coravg_istr_tot, coravg_istr_i)
-    
-    pot_idbd_i, coravg_idbd_i = func.potencia(señales[2], señales[3],señales[1],cant_per_iter, v_dc_in = voltaje_continua*1000, altafrec=alta_frec, streamer= False, tolerancia_corte=tolerancia_corte_dbd)[:2]
-    
-    pot_idbd_tot = np.append(pot_idbd_tot, pot_idbd_i)
-    
-    coravg_idbd_tot = np.append(coravg_idbd_tot, coravg_idbd_i)
-    
-potencia_istr = np.mean(pot_istr_tot)
-
-potencia_idbd = np.mean(pot_idbd_tot)
-
-cor_media_istr = np.mean(coravg_istr_tot)
-
-cor_media_idbd = np.mean(coravg_idbd_tot)
+potencia_istr, potencia_idbd, cor_media_istr, cor_media_idbd = func.potencia_prom(cant_per_iter, voltaje_continua, alta_frec, tolerancia_corte_str, tolerancia_corte_dbd, path, subpath, inicio_med, fin_med)
 
 print('Potencia media de streamers en W:', potencia_istr)
 print('Corriente media de streamers en mA:', cor_media_istr*1000)
@@ -244,27 +214,10 @@ inicio=37 #poner el minuto en que se encendió la descarga
 
 fin=46  #poner el minuto en que finalizó la descarga
 
-tiempo= np.linspace(0,duracion,len(NO))
-
-dondeini=np.where(tiempo>=inicio)[0][0] # índice donde comienza la descarga
-inicio=tiempo[dondeini] #tiempo de inicio medido por la máquina
-
-dondefin=np.where(tiempo>=fin)[0][0]#índice donde comienza la descarga
-
-
-
-
-ci= max(NO[dondeini:dondefin]) #concentracion inicial en ppm
-cf= min(NO[dondeini:dondefin]) #concentracion final en ppm
-
-efic_porcentual= (ci-cf)/ci *100 #eficiencia porcentual absoluta
-
-caudalprom=np.mean(caudal[dondeini:dondefin])
-
-efic = (caudalprom*(ci-cf)*1e-3 * 0.0407)/potencia_final #eficiencia relativa a la potencia suministrada en mol/(kW H)
+efic_porcentual, efic_ener = func.eficiencia(duracion, NO, caudal, potencia_final, inicio, fin)
 
 print('eficiencia porcentual:', efic_porcentual, '%')
-print('eficiencia por potencia:',efic,'mol/(kW H)')
+print('eficiencia por potencia:',efic_ener,'mol/(kW H)')
 
 
 
@@ -280,15 +233,47 @@ print('eficiencia por potencia:',efic,'mol/(kW H)')
 #%%
 
 #LEER UN ARCHIVO CSV
+csv.register_dialect('pycoma', delimiter=';')
 
-f = open(r'C:\Users\Matías\Documents\GitHub\Tesis\20181005\Concentracion NO.csv', 'rt')
+f = open(r'C:\Users\Matías\Documents\GitHub\Tesis\20181016(Jorge)\reactor jorge.csv', 'rt')
 try:
-    reader = csv.reader(f,dialect='pycoma') #si no se pone el dialect es ',' por defecto
+    #reader = csv.reader(f,dialect='pycoma') #si no se pone el dialect es ',' por defecto
+    reader = csv.reader(f)
     for row in reader:
         print(row)
 finally:
     f.close()
 
+#%%
+    
+#medicion de Jorge
+matriz=[]
+with open(r'C:\Users\Matías\Documents\GitHub\Tesis\20181016(Jorge)\reactor jorge.csv') as csvfile:
+        reader = csv.reader(csvfile) # change contents to floats
+        for row in reader: # cada fila es una lista
+            matriz.append(row)
+            
+            
+volt=np.array([]) #en volts
+t_volt=np.array([]) #en segundos
+istr=np.array([]) #en amper
+t_istr=np.array([]) #en segundos
+idbd=np.array([]) #en amper
+t_idbd=np.array([]) #en segundos
+
+for i in range(len(matriz)):
+        arr=np.asarray(matriz[i])
+        t_volt= np.append(t_volt, float(arr[0]))
+        volt = np.append(volt, float(arr[2]))
+        t_idbd= np.append(t_volt, float(arr[0]))
+        idbd = np.append(idbd, float(arr[3]))
+        t_istr= np.append(t_volt, float(arr[0]))
+        istr = np.append(istr, float(arr[1]))
+        
+idbd=np.append(idbd,0)
+istr=np.append(istr,0)
+volt=np.append(volt,0)
+t_volt=np.append(t_volt,0)
 
 
 

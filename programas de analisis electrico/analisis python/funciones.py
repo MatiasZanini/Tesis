@@ -181,6 +181,7 @@ def potencia(t_pot, cor_pot, v_ac_in, cant_periodos, v_dc_in = (-9000), altafrec
     if altafrec:
         cor_pot_fit, cor_pot_rec = recortar_corriente(t_pot, cor_pot, t_per, niter=50, atenuar_corte=tolerancia_corte)
         cor_aux = np.copy(cor_pot) - np.copy(cor_pot_rec)
+        
         vmax = max(v_ac_in)
         vmin = min(v_ac_in)
             
@@ -228,6 +229,73 @@ def potencia(t_pot, cor_pot, v_ac_in, cant_periodos, v_dc_in = (-9000), altafrec
 
 
     return pot_avg, cor_avg, cor_aux
+
+#%%
+    
+def eficiencia( duracion_med, concent_gas, caudal_gas, pot_total, inicio_desc, fin_desc,):
+
+    t_efic = np.linspace(0,duracion_med,len(concent_gas))
+
+    cuandoini=np.where(t_efic>=inicio_desc)[0][0] # índice donde comienza la descarga
+        
+    cuandofin=np.where(t_efic>=fin_desc)[0][0]#índice donde comienza la descarga
+     
+    ci= max(concent_gas[cuandoini:cuandofin]) #concentracion inicial en ppm
+    cf= min(concent_gas[cuandoini:cuandofin]) #concentracion final en ppm
+    
+    efic_porcentual= (ci-cf)/ci *100 #eficiencia porcentual absoluta
+    
+    caudalprom=np.mean(caudal_gas[cuandoini:cuandofin])
+    
+    efic_energetica = (caudalprom*(ci-cf)*1e-3 * 0.0407)/pot_total #eficiencia relativa a la potencia
+
+    return efic_porcentual, efic_energetica
+
+
+#%%
+    
+def potencia_prom(cant_per_iter, voltaje_continua, alta_frec, tolerancia_corte_str, tolerancia_corte_dbd, path, subpath, inicio_med, fin_med):
+    
+    pot_istr_tot = np.array([])
+
+    coravg_istr_tot = np.array([])
+    
+    pot_idbd_tot = np.array([])
+    
+    coravg_idbd_tot = np.array([])
+    
+    
+    for i in range(inicio_med,fin_med+1):
+        
+        path_iter = path+'\{}{}.csv'.format(subpath, i)
+        
+        señales = acondic(path_iter) #Indices de señales: tvolt,volt,tidbd,idbd,tistr,istr
+        
+        pot_istr_i, coravg_istr_i = potencia(señales[4], señales[5],señales[1], cant_per_iter, v_dc_in = voltaje_continua*1000,altafrec=alta_frec, streamer= True, tolerancia_corte=tolerancia_corte_str)[:2]
+        
+        pot_istr_tot = np.append(pot_istr_tot, pot_istr_i)
+        
+        coravg_istr_tot = np.append(coravg_istr_tot, coravg_istr_i)
+        
+        pot_idbd_i, coravg_idbd_i = potencia(señales[2], señales[3],señales[1],cant_per_iter, v_dc_in = voltaje_continua*1000, altafrec=alta_frec, streamer= False, tolerancia_corte=tolerancia_corte_dbd)[:2]
+        
+        pot_idbd_tot = np.append(pot_idbd_tot, pot_idbd_i)
+        
+        coravg_idbd_tot = np.append(coravg_idbd_tot, coravg_idbd_i)
+        
+    potencia_istr = np.mean(pot_istr_tot)
+    
+    potencia_idbd = np.mean(pot_idbd_tot)
+    
+    cor_media_istr = np.mean(coravg_istr_tot)
+    
+    cor_media_idbd = np.mean(coravg_idbd_tot)
+    
+    return potencia_istr, potencia_idbd, cor_media_istr, cor_media_idbd
+
+
+
+
 
 
 #%%
