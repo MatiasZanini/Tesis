@@ -33,7 +33,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Concentracion NO 1.csv") as csvfile:
+with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181109\Concentracion NO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -73,11 +73,11 @@ print('duración de la medición total:',duracion,'minutos')
 
 func.ploteo_concentracion(NO,duracion,'NO')
 
-#%%--------------------------------------------------POTENCIA------------------------------------------------------
+#%%----------------CARGA LOS DATOS DE POTENCIA MEDIDOS Y LOS GRAFICA------------------------------------------------------
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Bobina gas 1.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181109\Trafo gas 2.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -100,14 +100,14 @@ plt.ylabel('Corriente de streamers (mA)')
 plt.grid(True)
 
 
-#%% CALCULO DE LAS POTENCIAS
-cant_periodos=3
+#%% ------------------------------PREVISUALIZACION DE LAS POTENCIAS-------------------------
+cant_periodos=5
 
-tolerancia_picos= 3 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+tolerancia_picos= 1 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
-fuente_continua= -9.03 #en kV
+fuente_continua= -9.02 #en kV
 
-alta_frecuencia=True
+alta_frecuencia=False #si es una medicion de alta frecuencia poner True, o False de lo contrario.
 
 iper, tper = func.calculo_per(cant_periodos, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
 
@@ -125,7 +125,7 @@ plt.grid()
 #%%
 iper, tper = func.calculo_per(cant_periodos, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
 
-tolerancia_picos= 1/3  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+tolerancia_picos= 1  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
 potencia_idbd, cor_media_idbd, idbd_aux = func.potencia(t_idbd, idbd,volt,cant_periodos, v_dc_in=fuente_continua*1000, altafrec=alta_frecuencia, streamer=False , tolerancia_corte=tolerancia_picos)
 
@@ -145,46 +145,27 @@ plt.grid()
 
 
 
-#%%
 
-#prueba de recorte
-
-fit, rec =func.recortar_corriente(t_istr,istr,tper,niter=100) #guarda la funcion recortada y su fiteo
-
-plt.subplot(1,2,1)
-plt.plot(t_istr,istr*1000)
-plt.plot(t_istr,fit*1000)
-plt.xlabel('tiempo (s)')
-plt.ylabel('corriente (mA)')
-
-plt.subplot(1,2,2)
-plt.plot(t_istr,(istr-fit)*1000)
-
-plt.xlabel('tiempo (s)')
-plt.ylabel('corriente (mA)')
-
-
-#la corriente esta dando bien, pero la potencia da bajisima comparado a lo que da en el mathematica
 
 #%%---------------------------POTENCIA PROMEDIADA ENTRE VARIAS MEDICIONES-----------------
 
-cant_per_iter=7 #cantidad de periodos que hay en la medicion "a ojo"
+cant_per_iter=5 #cantidad de periodos que hay en la medicion "a ojo"
 
-voltaje_continua = -9.03 #indicar voltaje de la fuente externa en kilovolts
+voltaje_continua = -9.02 #indicar voltaje de la fuente externa en kilovolts
 
-alta_frec = True  # indicar si se trata de una medicion de alta frecuencia (True) o baja (False).
+alta_frec = False  # indicar si se trata de una medicion de alta frecuencia (True) o baja (False).
 
-tolerancia_corte_str= 3  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+tolerancia_corte_str= 1  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
-tolerancia_corte_dbd= 1/3
+tolerancia_corte_dbd= 1
 
-path = r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102"
+path = r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181109"
 
-subpath= 'Bobina gas '  #indicar nombre generico de las mediciones
+subpath= 'Trafo gas '  #indicar nombre generico de las mediciones
 
 inicio_med = 1 # indicar primer numero de la tira de mediciones
 
-fin_med = 4 # indicar ultimo numero de la tira de mediciones
+fin_med = 5 # indicar ultimo numero de la tira de mediciones
 
     
 potencia_istr, potencia_idbd, cor_media_istr, cor_media_idbd = func.potencia_prom(cant_per_iter, voltaje_continua, alta_frec, tolerancia_corte_str, tolerancia_corte_dbd, path, subpath, inicio_med, fin_med)
@@ -210,9 +191,9 @@ print('Corriente media de DBD en mA:', cor_media_idbd*1000)
 
 potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio=37 #poner el minuto en que se encendió la descarga
+inicio=9 #poner el minuto en que se encendió la descarga
 
-fin=46  #poner el minuto en que finalizó la descarga
+fin=19  #poner el minuto en que finalizó la descarga
 
 efic_porcentual, efic_ener = func.eficiencia(duracion, NO, caudal, potencia_final, inicio, fin)
 
@@ -275,6 +256,23 @@ istr=np.append(istr,0)
 volt=np.append(volt,0)
 t_volt=np.append(t_volt,0)
 
+#%%
+
+#Probar la funcion recortar
+
+fit, rec =func.recortar_corriente(t_istr,istr,tper,niter=100) #guarda la funcion recortada y su fiteo
+
+plt.subplot(1,2,1)
+plt.plot(t_istr,istr*1000)
+plt.plot(t_istr,fit*1000)
+plt.xlabel('tiempo (s)')
+plt.ylabel('corriente (mA)')
+
+plt.subplot(1,2,2)
+plt.plot(t_istr,(istr-fit)*1000)
+
+plt.xlabel('tiempo (s)')
+plt.ylabel('corriente (mA)')
 
 
 
