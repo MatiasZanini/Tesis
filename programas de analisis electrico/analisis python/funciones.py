@@ -178,6 +178,8 @@ def potencia(t_pot, cor_pot, v_ac_in, cant_periodos, v_dc_in = (-9000), altafrec
     
     ind_per, t_per = calculo_per(cant_periodos, t_pot, v_ac_in)
     
+    t_streamer = 2e-6
+    
     if altafrec:
         cor_pot_fit, cor_pot_rec = recortar_corriente(t_pot, cor_pot, t_per, niter=50, atenuar_corte=tolerancia_corte)
         cor_aux = np.copy(cor_pot) - np.copy(cor_pot_rec)
@@ -193,16 +195,17 @@ def potencia(t_pot, cor_pot, v_ac_in, cant_periodos, v_dc_in = (-9000), altafrec
         cor_suma=0.0
         if streamer:        
             for ind_pot in range(ind_per):
-            
+
                 pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med + v_dc)*0.5*(1+np.sign(cor_aux[ind_pot]))
                 cor_suma += cor_pot[ind_pot]*0.5*(1+np.sign(cor_aux[ind_pot]))
         else:
             for ind_pot in range(ind_per):
                 pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med + v_dc)
                 cor_suma += cor_pot[ind_pot]
-            
         pot_avg = pot/ind_per             #potencia media en W
-        cor_avg = cor_suma/ind_per   #corriente promedio en A
+        cor_avg = cor_suma/ind_per   #corriente promedio en A    
+        #pot_avg = pot*t_streamer*0.5/t_per             #potencia media en W
+        #cor_avg = cor_suma*t_streamer*0.5/t_per     #corriente promedio en A
     else:
         cor_aux = cor_pot - recortar_corriente(t_pot, cor_pot, t_per,niter=50, altafrec_rec=False, atenuar_corte=tolerancia_corte)
         vmax = max(v_ac_in)
@@ -223,8 +226,10 @@ def potencia(t_pot, cor_pot, v_ac_in, cant_periodos, v_dc_in = (-9000), altafrec
             for ind_pot in range(ind_per):
                 pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med + v_dc)
                 cor_suma += cor_pot[ind_pot]
-        pot_avg = pot/ind_per             #potencia media en W
-        cor_avg = cor_suma/ind_per   #corriente promedio en A
+#        pot_avg = pot/ind_per             #potencia media en W
+#        cor_avg = cor_suma/ind_per   #corriente promedio en A
+        pot_avg = pot*t_streamer*0.5/t_per             #potencia media en W
+        cor_avg = cor_suma*t_streamer*0.5/t_per     #corriente promedio en A
     
 
 

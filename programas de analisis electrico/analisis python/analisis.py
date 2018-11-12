@@ -77,31 +77,31 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181109\Trafo gas 2.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181109\Trafo gas 1.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
 plt.subplot(3,1,1)
 plt.plot(t_volt*1000,volt)
-plt.xlabel('tiempo (s)')
+plt.xlabel('tiempo (ms)')
 plt.ylabel('Voltaje entrada (V)')
 plt.grid(True)
 
 plt.subplot(3,1,2)
-plt.plot(t_idbd*1000,idbd*1000)
-plt.xlabel('tiempo (s)')
+plt.plot(t_idbd*1000,idbd*1000,'.-')
+plt.xlabel('tiempo (ms)')
 plt.ylabel('Corriente de DBD (mA)')
 plt.grid(True)
 
 plt.subplot(3,1,3)
-plt.plot(t_istr*1000,istr*1000)
+plt.plot(t_istr*1000,istr*1000, '.-')
 plt.xlabel('tiempo (ms)')
 plt.ylabel('Corriente de streamers (mA)')
 plt.grid(True)
 
 
 #%% ------------------------------PREVISUALIZACION DE LAS POTENCIAS-------------------------
-cant_periodos=5
+cant_periodos=6
 
 tolerancia_picos= 1 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
@@ -149,7 +149,7 @@ plt.grid()
 
 #%%---------------------------POTENCIA PROMEDIADA ENTRE VARIAS MEDICIONES-----------------
 
-cant_per_iter=5 #cantidad de periodos que hay en la medicion "a ojo"
+cant_per_iter=6 #cantidad de periodos que hay en la medicion "a ojo"
 
 voltaje_continua = -9.02 #indicar voltaje de la fuente externa en kilovolts
 
@@ -165,7 +165,7 @@ subpath= 'Trafo gas '  #indicar nombre generico de las mediciones
 
 inicio_med = 1 # indicar primer numero de la tira de mediciones
 
-fin_med = 5 # indicar ultimo numero de la tira de mediciones
+fin_med = 6 # indicar ultimo numero de la tira de mediciones
 
     
 potencia_istr, potencia_idbd, cor_media_istr, cor_media_idbd = func.potencia_prom(cant_per_iter, voltaje_continua, alta_frec, tolerancia_corte_str, tolerancia_corte_dbd, path, subpath, inicio_med, fin_med)
