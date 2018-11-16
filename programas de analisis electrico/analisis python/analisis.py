@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import funciones as func
 from importlib import reload
+#from scipy.signal import savgol_filter as smooth
 
 #%%  ---------------------Recargar el modulo con las funciones----------
 
@@ -33,7 +34,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181109\Concentracion NO.csv") as csvfile:
+with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Concentracion NO 1.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -77,7 +78,7 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181109\Trafo gas 1.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Bobina gas 1.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -103,11 +104,11 @@ plt.grid(True)
 #%% ------------------------------PREVISUALIZACION DE LAS POTENCIAS-------------------------
 cant_periodos=6
 
-tolerancia_picos= 1 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+tolerancia_picos= 3 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
 fuente_continua= -9.02 #en kV
 
-alta_frecuencia=False #si es una medicion de alta frecuencia poner True, o False de lo contrario.
+alta_frecuencia=True #si es una medicion de alta frecuencia poner True, o False de lo contrario.
 
 iper, tper = func.calculo_per(cant_periodos, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
 
@@ -153,19 +154,19 @@ cant_per_iter=6 #cantidad de periodos que hay en la medicion "a ojo"
 
 voltaje_continua = -9.02 #indicar voltaje de la fuente externa en kilovolts
 
-alta_frec = False  # indicar si se trata de una medicion de alta frecuencia (True) o baja (False).
+alta_frec = True  # indicar si se trata de una medicion de alta frecuencia (True) o baja (False).
 
-tolerancia_corte_str= 1  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+tolerancia_corte_str= 3  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
 tolerancia_corte_dbd= 1
 
-path = r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181109"
+path = r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102"
 
-subpath= 'Trafo gas '  #indicar nombre generico de las mediciones
+subpath= 'Bobina gas '  #indicar nombre generico de las mediciones
 
 inicio_med = 1 # indicar primer numero de la tira de mediciones
 
-fin_med = 6 # indicar ultimo numero de la tira de mediciones
+fin_med = 4 # indicar ultimo numero de la tira de mediciones
 
     
 potencia_istr, potencia_idbd, cor_media_istr, cor_media_idbd = func.potencia_prom(cant_per_iter, voltaje_continua, alta_frec, tolerancia_corte_str, tolerancia_corte_dbd, path, subpath, inicio_med, fin_med)
@@ -191,9 +192,9 @@ print('Corriente media de DBD en mA:', cor_media_idbd*1000)
 
 potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio=9 #poner el minuto en que se encendió la descarga
+inicio=37 #poner el minuto en que se encendió la descarga
 
-fin=19  #poner el minuto en que finalizó la descarga
+fin=47  #poner el minuto en que finalizó la descarga
 
 efic_porcentual, efic_ener = func.eficiencia(duracion, NO, caudal, potencia_final, inicio, fin)
 
@@ -205,10 +206,31 @@ print('eficiencia por potencia:',efic_ener,'mol/(kW H)')
 
 
 
+#%% -----------------------------------Analisis de un pico---------------------------
+path= r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181111\Pico trafo 5.csv"
 
-            
-        
+t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
+'''              
+estimacion de la duracion del pico a partir de un analisis del ruido de los primeros 100
+puntos, y considerando que cuando decae como 1/e ya se termino. 
+
+'''
+pico_auxiliar= istr/(max(istr))
+
+ruido = np.std(pico_auxiliar[:100])
+
+inicio_pico = np.where(pico_auxiliar>= 4* ruido)[0][0]
+fin_pico = np.where(pico_auxiliar[inicio_pico:]< 1/np.e*ruido)[0][0]+inicio_pico
+
+duracion_pico = t_istr[fin_pico]-t_istr[inicio_pico]
+
+print('Duracion del pico en microsegundos:' , duracion_pico *1e6)
+
+plt.plot(t_istr[inicio_pico:fin_pico]*1000, pico_auxiliar[inicio_pico:fin_pico], '.-')
+plt.xlabel('tiempo (ms)')
+plt.ylabel('Corriente de streamers (mA)')
+plt.grid(True)
 
 
 #%%

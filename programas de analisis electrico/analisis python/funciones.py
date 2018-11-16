@@ -12,6 +12,40 @@ import matplotlib.pyplot as plt
 import csv
 
 #%%
+#devuelve un diccionario con los vectores del archivo csv. El archivo no debe contener mas columnas que las que se desea pasar a array.
+
+def csv2arrays(path, fila_inicio = 0, pycoma = False):
+    matriz=[]
+    
+    if pycoma:
+        csv.register_dialect('pycoma', delimiter=';')
+        with open(path) as csvfile:
+            reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # cambia todo a float
+            for row in reader: # cada fila es una lista
+                matriz.append(row)
+    else:
+        with open(path) as csvfile:
+            reader = csv.reader(csvfile, quoting=csv.QUOTE_NONNUMERIC) # cambia todo a float
+            for row in reader: # cada fila es una lista
+                matriz.append(row)
+    
+    fila_fin = len(matriz) - 1 
+    cant_vectores = len(matriz[fila_inicio])
+
+    vectores = {}
+    for x in range(cant_vectores):
+        vectores["vector{0}".format(x)]= np.array([])
+         
+    
+    for i in range(fila_inicio, fila_fin):
+        for j in range(cant_vectores):
+            vectores["vector{0}".format(j)]= np.append(vectores["vector{0}".format(j)], float(matriz[i][j]))
+              
+    return vectores
+
+
+
+#%%
 
 def lapso(inicio,fin):    #devuelve la resta de tiempos en minutos. pide string del tipo hh:mm:ss
    
@@ -178,7 +212,7 @@ def potencia(t_pot, cor_pot, v_ac_in, cant_periodos, v_dc_in = (-9000), altafrec
     
     ind_per, t_per = calculo_per(cant_periodos, t_pot, v_ac_in)
     
-    t_streamer = 2e-6
+    t_streamer = 2e-6 #duracion de un streamer en seg
     
     if altafrec:
         cor_pot_fit, cor_pot_rec = recortar_corriente(t_pot, cor_pot, t_per, niter=50, atenuar_corte=tolerancia_corte)
