@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import funciones as func
 from importlib import reload
-#from scipy.signal import savgol_filter as smooth
+from scipy.signal import savgol_filter as smooth
 
 #%%  ---------------------Recargar el modulo con las funciones----------
 
@@ -34,7 +34,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Concentracion NO 1.csv") as csvfile:
+with open(r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181120\Concentracion NO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -78,7 +78,7 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Bobina gas 1.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181120\Bobina gas.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -102,13 +102,13 @@ plt.grid(True)
 
 
 #%% ------------------------------PREVISUALIZACION DE LAS POTENCIAS-------------------------
-cant_periodos=6
+cant_periodos=4
 
 tolerancia_picos= 3 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
 fuente_continua= -9.02 #en kV
 
-alta_frecuencia=True #si es una medicion de alta frecuencia poner True, o False de lo contrario.
+alta_frecuencia=False #si es una medicion de alta frecuencia poner True, o False de lo contrario.
 
 iper, tper = func.calculo_per(cant_periodos, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
 
@@ -140,7 +140,13 @@ plt.grid()
 
 
 
+#%%
 
+#ACA LLAMAR A LA FUNCION POTENCIA_VENTANA. PARA ELLO VA A HABER QUE CARGAR PRIMERO LA MEDICION DEL PERIODO EN UN VECTOR, Y DESPUES
+#CARGAR LAS OTRAS MEDICIONES. PROBAR SI CON ESO SOLO FUNCIONA (SI LOGRA FITEAR UN SENO SOBRE ESO). 
+
+#PARA BAJA FRECUENCIA, EN PRINCIPIO BASTA CON DARLE LA MEDICION DEL PERIODO PARA QUE CALCULE TPER E IPER Y CON ESO YA NO DEBERIA 
+#HABER PROBLEMA, YA QUE NO HAY QUE AJUSTARLA POR NADA MAS QUE POR CERO.
 
 
 
@@ -192,9 +198,9 @@ print('Corriente media de DBD en mA:', cor_media_idbd*1000)
 
 potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio=37 #poner el minuto en que se encendió la descarga
+inicio=17 #poner el minuto en que se encendió la descarga
 
-fin=47  #poner el minuto en que finalizó la descarga
+fin=36  #poner el minuto en que finalizó la descarga
 
 efic_porcentual, efic_ener = func.eficiencia(duracion, NO, caudal, potencia_final, inicio, fin)
 
@@ -207,7 +213,7 @@ print('eficiencia por potencia:',efic_ener,'mol/(kW H)')
 
 
 #%% -----------------------------------Analisis de un pico---------------------------
-path= r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181111\Pico trafo 5.csv"
+path= r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181111\Pico trafo 4.csv"
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -216,18 +222,41 @@ estimacion de la duracion del pico a partir de un analisis del ruido de los prim
 puntos, y considerando que cuando decae como 1/e ya se termino. 
 
 '''
-pico_auxiliar= istr/(max(istr))
+pico_auxiliar = istr/(max(istr))
 
-ruido = np.std(pico_auxiliar[:100])
+pico_central = np.where(t_istr >= -0.0000005)[0][0]                       #si hay mas de un pico
 
-inicio_pico = np.where(pico_auxiliar>= 4* ruido)[0][0]
-fin_pico = np.where(pico_auxiliar[inicio_pico:]< 1/np.e*ruido)[0][0]+inicio_pico
+pico_auxiliar = pico_auxiliar[pico_central:]                              #si hay mas de un pico. borrar [pico_central:] sino.
+
+t_istr_aux = t_istr[pico_central:]
+
+pico_auxiliar = smooth(pico_auxiliar, 51, 3)                              # eliminando ruido
+
+#ruido = np.std(pico_auxiliar[:100])                                        #dejando el ruido
+
+#inicio_pico = np.where(pico_auxiliar >= ruido*15)[0][0]                     #dejando el ruido (cambiar el factor que multiplica al ruido, acorde a la medicion)
+
+inicio_pico = np.where(pico_auxiliar>= 0.05)[0][0]                        # eliminando ruido
+
+#fin_pico = np.where(pico_auxiliar[inicio_pico:]< 1/np.e)[0][35]+inicio_pico
+
+
+fin_pico_aux = np.where(pico_auxiliar[inicio_pico:]< 1/np.e)[0]
+
+for i in range(len(fin_pico_aux)-1):
+    if fin_pico_aux[i+1]-fin_pico_aux[i]>5:
+        ind_fin_pico = i+1
+
+fin_pico = fin_pico_aux[ind_fin_pico] + inicio_pico
+
+
 
 duracion_pico = t_istr[fin_pico]-t_istr[inicio_pico]
 
 print('Duracion del pico en microsegundos:' , duracion_pico *1e6)
 
-plt.plot(t_istr[inicio_pico:fin_pico]*1000, pico_auxiliar[inicio_pico:fin_pico], '.-')
+plt.plot(t_istr_aux*1000, pico_auxiliar)
+plt.plot(t_istr_aux[inicio_pico:fin_pico]*1000, pico_auxiliar[inicio_pico:fin_pico], '.-')
 plt.xlabel('tiempo (ms)')
 plt.ylabel('Corriente de streamers (mA)')
 plt.grid(True)
