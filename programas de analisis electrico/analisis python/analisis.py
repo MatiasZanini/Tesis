@@ -78,7 +78,7 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181120\Bobina gas.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Bobina gas ventana 1.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -140,15 +140,72 @@ plt.grid()
 
 
 
-#%%
+#%%  ------------------------------potencia con ventana-----------------------------
 
-#ACA LLAMAR A LA FUNCION POTENCIA_VENTANA. PARA ELLO VA A HABER QUE CARGAR PRIMERO LA MEDICION DEL PERIODO EN UN VECTOR, Y DESPUES
-#CARGAR LAS OTRAS MEDICIONES. PROBAR SI CON ESO SOLO FUNCIONA (SI LOGRA FITEAR UN SENO SOBRE ESO). 
+path_comp = r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Trafo gas.csv'
 
-#PARA BAJA FRECUENCIA, EN PRINCIPIO BASTA CON DARLE LA MEDICION DEL PERIODO PARA QUE CALCULE TPER E IPER Y CON ESO YA NO DEBERIA 
-#HABER PROBLEMA, YA QUE NO HAY QUE AJUSTARLA POR NADA MAS QUE POR CERO.
+path = r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Trafo gas ventana pk detect 1.csv'
+
+fuente_continua= -9.02 #en kV
+
+tolerancia_picos = 1
+
+t_comp, volt_comp = func.acondic(path_comp)[0:2]
+
+t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
+
+alta_frecuencia = False
+
+potencia_istr, cor_media_istr, istr_aux = func.potencia_ventana(t_comp, volt_comp, t_istr, istr, volt, cant_periodos, altafrec=alta_frecuencia,  v_dc_in=fuente_continua*1000 , tolerancia_corte=tolerancia_picos)
 
 
+print('Potencia media de streamers en W:', potencia_istr)
+print('Corriente media de streamers en mA:', cor_media_istr*1000)
+
+plt.plot(t_istr*1000,istr_aux*1000)
+plt.xlabel('tiempo (ms)')
+plt.ylabel('Corriente (mA)')
+plt.grid(True)
+#plt.plot(t_istr,fiteada)
+
+
+
+
+#iper, tper = func.calculo_per(cant_periodos, t_comp, volt_comp)
+#
+#potencia_istr_sum = 0
+#
+#cor_media_istr_sum = 0
+#
+#vmax = max(volt_comp)
+#vmin = min(volt_comp)
+#
+#
+#v_ac_med = (vmax+vmin)/2
+#        
+#v_dc = v_ac_med-fuente_continua*1000
+#
+#
+#
+#for i in range(len(volt)-1):
+#    potencia_istr_sum += istr[i]*(volt[i])*0.5*(1+np.sign(istr[i]))
+#    cor_media_istr_sum += istr[i]*0.5*(1+np.sign(istr[i]))
+#    
+#potencia_istr = potencia_istr_sum/len(volt)*(t_volt[len(t_volt)-1]-t_volt[0])/tper             #potencia media en W
+#cor_media_istr = cor_media_istr_sum /len(volt)*(t_volt[len(t_volt)-1]-t_volt[0])/tper    #corriente promedio en A
+#
+#
+#
+
+
+#
+#print('Potencia media de streamers en W:', potencia_istr)
+#print('Corriente media de streamers en mA:', cor_media_istr*1000)
+#
+#plt.plot(t_istr[:iper]*1000,istr_aux[:iper]*1000)
+#plt.xlabel('tiempo (ms)')
+#plt.ylabel('Corriente de streamers (mA)')
+#plt.grid()
 
 
 
@@ -213,7 +270,7 @@ print('eficiencia por potencia:',efic_ener,'mol/(kW H)')
 
 
 #%% -----------------------------------Analisis de un pico---------------------------
-path= r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181111\Pico trafo 4.csv"
+path= r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Pico trafo 1.csv"
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -224,19 +281,19 @@ puntos, y considerando que cuando decae como 1/e ya se termino.
 '''
 pico_auxiliar = istr/(max(istr))
 
-pico_central = np.where(t_istr >= -0.0000005)[0][0]                       #si hay mas de un pico
+#pico_central = np.where(t_istr >= -0.0000005)[0][0]                       #si hay mas de un pico
 
-pico_auxiliar = pico_auxiliar[pico_central:]                              #si hay mas de un pico. borrar [pico_central:] sino.
+pico_auxiliar = pico_auxiliar #[pico_central:]                              #si hay mas de un pico. borrar [pico_central:] sino.
 
-t_istr_aux = t_istr[pico_central:]
+t_istr_aux = t_istr #[pico_central:]
 
-pico_auxiliar = smooth(pico_auxiliar, 51, 3)                              # eliminando ruido
+#pico_auxiliar = smooth(pico_auxiliar, 51, 3)                              # eliminando ruido
 
-#ruido = np.std(pico_auxiliar[:100])                                        #dejando el ruido
+ruido = np.std(pico_auxiliar[:100])                                        #dejando el ruido
 
-#inicio_pico = np.where(pico_auxiliar >= ruido*15)[0][0]                     #dejando el ruido (cambiar el factor que multiplica al ruido, acorde a la medicion)
+inicio_pico = np.where(pico_auxiliar >= ruido*5)[0][0]                     #dejando el ruido (cambiar el factor que multiplica al ruido, acorde a la medicion)
 
-inicio_pico = np.where(pico_auxiliar>= 0.05)[0][0]                        # eliminando ruido
+#inicio_pico = np.where(pico_auxiliar>= 0.05)[0][0]                        # eliminando ruido
 
 #fin_pico = np.where(pico_auxiliar[inicio_pico:]< 1/np.e)[0][35]+inicio_pico
 
@@ -324,7 +381,6 @@ plt.plot(t_istr,(istr-fit)*1000)
 
 plt.xlabel('tiempo (s)')
 plt.ylabel('corriente (mA)')
-
 
 
 
