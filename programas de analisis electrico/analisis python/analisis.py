@@ -34,7 +34,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181120\Concentracion NO.csv") as csvfile:
+with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Concentracion NO 1.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -78,33 +78,38 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Bobina gas ventana 1.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Trafo gas 1.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
-plt.subplot(3,1,1)
+plt.subplots(3,1, sharex=True)
+
+g1 = plt.subplot(3,1,1)
 plt.plot(t_volt*1000,volt)
-plt.xlabel('tiempo (ms)')
-plt.ylabel('Voltaje entrada (V)')
+plt.xlabel('tiempo (ms)', fontsize=20)
+plt.ylabel('Voltaje entrada (V)', fontsize=12)
 plt.grid(True)
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
 
-plt.subplot(3,1,2)
+plt.subplot(3,1,2, sharex=g1)
 plt.plot(t_idbd*1000,idbd*1000,'.-')
-plt.xlabel('tiempo (ms)')
-plt.ylabel('Corriente de DBD (mA)')
+plt.xlabel('tiempo (ms)', fontsize=20)
+plt.ylabel('Corriente de DBD (mA)', fontsize=12)
 plt.grid(True)
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
 
-plt.subplot(3,1,3)
+plt.subplot(3,1,3, sharex=g1)
 plt.plot(t_istr*1000,istr*1000, '.-')
-plt.xlabel('tiempo (ms)')
-plt.ylabel('Corriente de streamers (mA)')
+plt.xlabel('tiempo (ms)', fontsize=20)
+plt.ylabel('Corriente de streamers (mA)', fontsize=12)
 plt.grid(True)
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
 
 
 #%% ------------------------------PREVISUALIZACION DE LAS POTENCIAS-------------------------
-cant_periodos=4
+cant_periodos=6
 
-tolerancia_picos= 3 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+tolerancia_picos= 4 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
 fuente_continua= -9.02 #en kV
 
@@ -255,9 +260,9 @@ print('Corriente media de DBD en mA:', cor_media_idbd*1000)
 
 potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio=17 #poner el minuto en que se encendió la descarga
+inicio=25 #poner el minuto en que se encendió la descarga
 
-fin=36  #poner el minuto en que finalizó la descarga
+fin=32  #poner el minuto en que finalizó la descarga
 
 efic_porcentual, efic_ener = func.eficiencia(duracion, NO, caudal, potencia_final, inicio, fin)
 

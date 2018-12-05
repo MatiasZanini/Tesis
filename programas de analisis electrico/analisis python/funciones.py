@@ -68,11 +68,12 @@ def ploteo_concentracion(gas,duracion,nombre):
     puntos=len(gas)
     
     tiempo=np.linspace(0,duracion,puntos)
-    plt.plot(tiempo,gas)
+    plt.plot(tiempo,gas, linewidth = 3)
+    plt.tick_params(axis = 'both', which = 'both', width = 2, length = 4, labelsize = 20)
     
-    plt.xlabel('Tiempo (m)')
-    plt.ylabel('Concentración de '+ nombre+ ' (ppm)')
-    plt.grid(True)
+    plt.xlabel('Tiempo (min)', fontsize = 20)
+    plt.ylabel('Concentración de '+ nombre+ ' (ppm)', fontsize=20)
+    plt.grid(axis = 'both', which = 'both', alpha = 0.8, linewidth = 2, linestyle = '--')
     
     
     
