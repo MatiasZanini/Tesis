@@ -34,7 +34,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Concentracion NO 1.csv") as csvfile:
+with open(r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181203\Concentracion NO(completo).csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -72,15 +72,19 @@ print('duración de la medición total:',duracion,'minutos')
 #la funcion pide el array con la medicion, la duracion total y 
 #el nombre que se quiera en el label 
 
+plt.figure()
+
 func.ploteo_concentracion(NO,duracion,'NO')
 
 #%%----------------CARGA LOS DATOS DE POTENCIA MEDIDOS Y LOS GRAFICA------------------------------------------------------
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Trafo gas 1.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181203\Trafo gas.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
+
+plt.figure()
 
 plt.subplots(3,1, sharex=True)
 
@@ -111,7 +115,7 @@ cant_periodos=6
 
 tolerancia_picos= 4 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
-fuente_continua= -9.02 #en kV
+fuente_continua= -11.3 #en kV
 
 alta_frecuencia=False #si es una medicion de alta frecuencia poner True, o False de lo contrario.
 
@@ -121,7 +125,9 @@ potencia_istr, cor_media_istr, istr_aux = func.potencia(t_istr, istr, volt, cant
 
 print('Potencia media de streamers en W:', potencia_istr)
 print('Corriente media de streamers en mA:', cor_media_istr*1000)
+print('voltaje pico a pico en kV:', func.pico_pico(volt)/1000)
 
+plt.figure()
 plt.plot(t_istr[:iper]*1000,istr_aux[:iper]*1000)
 plt.xlabel('tiempo (ms)')
 plt.ylabel('Corriente de streamers (mA)')
@@ -138,6 +144,7 @@ potencia_idbd, cor_media_idbd, idbd_aux = func.potencia(t_idbd, idbd,volt,cant_p
 print('Potencia media de DBD en W:', potencia_idbd)
 print('Corriente media de DBD en mA:', cor_media_idbd*1000)
 
+plt.figure()
 plt.plot(t_istr[:iper]*1000,idbd_aux[:iper]*1000)
 plt.xlabel('tiempo (ms)')
 plt.ylabel('Corriente de DBD (mA)')
@@ -147,9 +154,9 @@ plt.grid()
 
 #%%  ------------------------------potencia con ventana-----------------------------
 
-path_comp = r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Trafo gas.csv'
+path_comp = r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181203\Trafo gas.csv'
 
-path = r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Trafo gas ventana pk detect 1.csv'
+path = r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181203\Trafo ventana 2.csv'
 
 fuente_continua= -9.02 #en kV
 
@@ -161,12 +168,13 @@ t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
 alta_frecuencia = False
 
-potencia_istr, cor_media_istr, istr_aux = func.potencia_ventana(t_comp, volt_comp, t_istr, istr, volt, cant_periodos, altafrec=alta_frecuencia,  v_dc_in=fuente_continua*1000 , tolerancia_corte=tolerancia_picos)
+potencia_istr, cor_media_istr, istr_aux = func.potencia_ventana(t_comp, volt_comp, t_istr, istr, volt, cant_periodos, v_dc_in=fuente_continua*1000, altafrec=alta_frecuencia,  tolerancia_corte=tolerancia_picos)
 
 
 print('Potencia media de streamers en W:', potencia_istr)
 print('Corriente media de streamers en mA:', cor_media_istr*1000)
 
+plt.figure()
 plt.plot(t_istr*1000,istr_aux*1000)
 plt.xlabel('tiempo (ms)')
 plt.ylabel('Corriente (mA)')
@@ -174,6 +182,22 @@ plt.grid(True)
 #plt.plot(t_istr,fiteada)
 
 
+#%%
+
+
+tolerancia_picos = 1
+
+potencia_idbd, cor_media_idbd, idbd_aux = func.potencia_ventana(t_comp, volt_comp, t_idbd, idbd, volt, cant_periodos, v_dc_in=fuente_continua*1000 , altafrec=alta_frecuencia, streamer=False,  tolerancia_corte=tolerancia_picos)
+
+
+print('Potencia media de streamers en W:', potencia_idbd)
+print('Corriente media de streamers en mA:', cor_media_idbd*1000)
+
+plt.figure()
+plt.plot(t_idbd*1000,idbd_aux*1000)
+plt.xlabel('tiempo (ms)')
+plt.ylabel('Corriente (mA)')
+plt.grid(True)
 
 
 #iper, tper = func.calculo_per(cant_periodos, t_comp, volt_comp)
@@ -220,21 +244,21 @@ plt.grid(True)
 
 cant_per_iter=6 #cantidad de periodos que hay en la medicion "a ojo"
 
-voltaje_continua = -9.02 #indicar voltaje de la fuente externa en kilovolts
+voltaje_continua = -9.03 #indicar voltaje de la fuente externa en kilovolts
 
-alta_frec = True  # indicar si se trata de una medicion de alta frecuencia (True) o baja (False).
+alta_frec = False  # indicar si se trata de una medicion de alta frecuencia (True) o baja (False).
 
-tolerancia_corte_str= 3  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+tolerancia_corte_str= 4  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
 tolerancia_corte_dbd= 1
 
-path = r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102"
+path = r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181102"
 
-subpath= 'Bobina gas '  #indicar nombre generico de las mediciones
+subpath= 'Trafo gas '  #indicar nombre generico de las mediciones
 
-inicio_med = 1 # indicar primer numero de la tira de mediciones
+inicio_med = 9 # indicar primer numero de la tira de mediciones
 
-fin_med = 4 # indicar ultimo numero de la tira de mediciones
+fin_med = 12 # indicar ultimo numero de la tira de mediciones
 
     
 potencia_istr, potencia_idbd, cor_media_istr, cor_media_idbd = func.potencia_prom(cant_per_iter, voltaje_continua, alta_frec, tolerancia_corte_str, tolerancia_corte_dbd, path, subpath, inicio_med, fin_med)
@@ -260,12 +284,13 @@ print('Corriente media de DBD en mA:', cor_media_idbd*1000)
 
 potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio=25 #poner el minuto en que se encendió la descarga
+inicio=103 #poner el minuto en que se encendió la descarga
 
-fin=32  #poner el minuto en que finalizó la descarga
+fin=129  #poner el minuto en que finalizó la descarga
 
 efic_porcentual, efic_ener = func.eficiencia(duracion, NO, caudal, potencia_final, inicio, fin)
 
+print('Potencia total en W:', potencia_final)
 print('eficiencia porcentual:', efic_porcentual, '%')
 print('eficiencia por potencia:',efic_ener,'mol/(kW H)')
 

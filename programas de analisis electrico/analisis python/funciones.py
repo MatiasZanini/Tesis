@@ -111,6 +111,18 @@ def acondic(path,fdbd=1/50,fstr=1/50):
     
 
 #%%
+def pico_pico(senal):
+    
+    maximo = max(senal)
+    minimo = min(senal)
+    
+    vpp = maximo - minimo
+    
+    return vpp
+
+
+
+#%%
     
 def funcaux(t,tper,b,c,d):
     return b*np.cos(2*np.pi/tper*t + c) + d
