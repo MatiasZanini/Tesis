@@ -27,3 +27,7 @@ MEDICION PEGADA A LA OTRA.
 -MUY IMPORTANTE: no guardar mas mediciones en el repositorio. Guardarlas en un drive, y despues guardarlas en la carpeta Mediciones (dentro del gitignore). El repo ya esta a la mitad de la capacidad.
 
 
+-jueves 13/12/18: medir de nuevo todo lo normal para CO para tener reproducibilidad. Medir concentracion y 
+señales electricas para diferentes valores de Vac en alta frecuencia para el NO. Recordar que el optimo es 13 kV, por lo que habria que moverse en un rango alrededor de dicho valor.
+
+

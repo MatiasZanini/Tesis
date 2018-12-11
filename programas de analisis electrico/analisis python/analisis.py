@@ -34,7 +34,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181203\Concentracion NO(completo).csv") as csvfile:
+with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181211\Concentracion CO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -74,7 +74,7 @@ print('duración de la medición total:',duracion,'minutos')
 
 plt.figure()
 
-func.ploteo_concentracion(NO,duracion,'NO')
+func.ploteo_concentracion(CO,duracion,'CO')
 
 #%%----------------CARGA LOS DATOS DE POTENCIA MEDIDOS Y LOS GRAFICA------------------------------------------------------
 
