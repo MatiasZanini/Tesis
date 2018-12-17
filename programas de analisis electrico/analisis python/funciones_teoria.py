@@ -8,18 +8,20 @@ Created on Mon Dec 17 10:21:28 2018
 import scipy.special as special
 import scipy.integrate as integrate
 import scipy.constants as ctes
+import scipy.misc as misc
 import numpy as np
+import matplotlib.pyplot as plt
 
 #%%
 
 # Integral util para el calculo del potencial en el electrodo. r y z son los puntos donde se 
 # evalua el campo (cilindricas) y zd es la posicion axial del anillo conductor. k es el numero de onda sobre el cual se integra.
 
-def func_int_potencial(k, r, z, zd):
+def func_int_potencial(k, r, z, zd, r_cond = 2e-2, r_malla = 5e-2):
     
-    r_cond = 1e-3 #radio del anillo conductor en metros.
+    #r_cond radio del anillo conductor en metros.
     
-    r_malla = 3e-3 #radio de la malla conductora externa en metros.
+    #r_malla radio de la malla conductora externa en metros.
     
     f = special.i0(k*r_cond) * np.cos(k*(z-zd)) * (special.k0(k*r) - 
         special.i0(k *r)*special.k0(k*r_malla)/special.i0(k*r_malla))
@@ -30,7 +32,7 @@ def func_int_potencial(k, r, z, zd):
 
 def int_potencial(r, z, zd):
     
-    return integrate.quad(func_int_potencial, 0, np.inf, args = (r, z, zd))[0]
+    return integrate.quad(func_int_potencial, 1e-2, 10000, args = (r, z, zd))[0]
 
 
 def coef_potencial(r, z, er, zd1 = 0, zd2 = 1e-3):
@@ -58,13 +60,13 @@ ctes_diel = {'pvc': 3.2 , 'teflon': 2.1}
     
 dielectrico = 'pvc'
 
-r_cond = 1e-3 # radio del anillo conductor en metros
+r_cond = 2e-2 # radio del anillo conductor en metros
 
-vac = 14e3 # voltaje pico a pico de alterna en volts.
+vac = 1 # en volts
 
-zd1 = 0
+zd1 = 0 # posicion axial del electrodo activo en metros.
 
-zd2 = 1e-3 #distancia entre los conductores en metros
+zd2 = 5e-3 # posicion axial del electrodo a tierra en metros.
 
 er = ctes_diel[dielectrico]
     
@@ -87,11 +89,62 @@ else:
     print('ERROR: El sistema no pudo resolverse')
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+#%%    
+
+def potencial(r, z, vac, cargas, er, zd1 = 0, zd2 = 5e-3):
+    
+    cte = 1/ (2*np.pi**2 * ctes.epsilon_0 * er)
+    
+    qd1, qd2 = cargas
+    
+    
+    v = cte*vac*(qd1*int_potencial(r, z , zd1) + qd2*int_potencial(r, z, zd2))
+    
+    return v
+
+def campo(r, vac, cargas, er, z0 = 0, zd1 = 0, zd2 = 5e-3):
+    
+    E = misc.derivative(potencial, r, dx = 1e-7, args=(z0, vac, cargas, er))
+    
+    return E
+    
+
+
 #%%
+
+r= 3e-2 # posición radial en la que se desea evaluar el campo electrico.
+    
+campo_elect = campo(r, vac, cargas, er)
+
+
+
+
 
     
     
     
+#%% pruebas
+    
+k = np.linspace(1e-6,1000,10000)
+
+a = func_int_potencial(k, 3e-2, 0, 1e-3)
+    
+plt.plot(a)    
+
+b0=integrate.quad(func_int_potencial, 1e-6, 1000, args=(3e-2,0,1e-3))[0]
+
+b= integrate.quad(func_int_potencial, 1e-6, 2000, args=(3e-2,0,1e-3))[0]
+
+print(b-b0)
     
     
     
