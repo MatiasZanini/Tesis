@@ -63,6 +63,28 @@ print(capacidad_total)
 
 #%%
 
+#------------------------------Cargar datos del Bolsig---------------------------------
+
+
+signal = np.loadtxt(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\mobility2.txt", delimiter = '\t', unpack = True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     
   

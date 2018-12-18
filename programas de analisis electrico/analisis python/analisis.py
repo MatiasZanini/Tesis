@@ -418,7 +418,15 @@ plt.ylabel('corriente (mA)')
 
 #------------------------------------Calculo de capacidades experimentales------------------------------
 
-v_deriv = func.derivada_num(t_volt, volt)
+periodo = func.calculo_per(6, t_volt, volt)[1]
+
+v = func.fitear(func.funcaux, t_volt, volt, params_opt = [periodo,1,1,1])
+
+v_deriv = func.derivada_num(t_volt, v) 
+
+#plt.plot(t_volt, volt)
+#
+#plt.plot(t_volt, v)
 
 largo_deriv = len(v_deriv)
 
@@ -431,6 +439,9 @@ c12_exp = -(np.dot(idbd_rec, v_deriv) / sum(v_deriv**2))
 c13_exp = -(np.dot(istr_rec, v_deriv) / sum(v_deriv**2))
 
 print('C12, C13 experimentales, en pF:', c12_exp*1e12, c13_exp*1e12)
+
+
+#%%
 
 
 

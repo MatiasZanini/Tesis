@@ -120,16 +120,28 @@ def campo(r, vac, vdc, permit, r_cond = 65e-3 /2, z0 = 0, zd1 = 0, zd2 = 5e-3):
         er = ctes_diel[permit]
         
         coefs1 = coef_potencial(r_cond, zd1, er)
+        
+        print(coefs1)
     
         coefs2 = coef_potencial(r_cond, zd2, er)
         
-        coefs = np.array([coefs1, coefs2])
+        print(coefs2)
+        
+        coefs = np.array([coefs1 , coefs2])
+        
+        print(coefs)
         
         voltajes = np.array([vac-vdc, -vdc])
         
+        print(voltajes)
+        
         capacidad = np.linalg.inv(coefs) #coeficientes de capacidad (Q=C.V)
         
+        print(capacidad)
+        
         cargas = np.dot(capacidad, voltajes)
+        
+        print(cargas)
         
         E = -misc.derivative(potencial, r, dx = 1e-7, args=(z0, vac, cargas, er))
     
