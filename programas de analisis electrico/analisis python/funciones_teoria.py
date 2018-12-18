@@ -113,7 +113,7 @@ def potencial(r, z, vac, cargas, er, zd1 = 0, zd2 = 5e-3):
 
 def campo(r, vac, vdc, permit, r_cond = 65e-3 /2, z0 = 0, zd1 = 0, zd2 = 5e-3):
     
-    try: 
+    if permit =='pvc' or permit =='teflon': 
     
         ctes_diel = {'pvc': 3.2 , 'teflon': 2.1}
         
@@ -134,22 +134,9 @@ def campo(r, vac, vdc, permit, r_cond = 65e-3 /2, z0 = 0, zd1 = 0, zd2 = 5e-3):
         E = -misc.derivative(potencial, r, dx = 1e-7, args=(z0, vac, cargas, er))
     
         return E, cargas, capacidad
-    except permit !='pvc' or permit !='teflon':
+    else:
         
         raise ValueError('Dielectrico no reconocido')
-    
-
-
-#%%
-#
-#r= 3e-2 # posición radial en la que se desea evaluar el campo electrico.
-#    
-#campo_elect = campo(r, vac, cargas, er)
-
-
-
-
-
     
     
     

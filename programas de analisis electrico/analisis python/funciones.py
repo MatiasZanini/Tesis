@@ -418,6 +418,45 @@ def potencia_ventana(t_completo, v_completo, t_pot, cor_pot, v_ac_in, cant_perio
 
 
 #%%
+
+def derivada_num(x,y):
+    
+    largo_x = len(x)
+    
+    largo_y = len(y)
+    
+    if largo_x != largo_y:
+        
+        raise ValueError('Los vectores deben ser del mismo tamaño.')
+    
+    
+    derivada = np.array([])
+    
+    
+    for i in range(largo_x-2):
+                   
+        dx = x[i+1]-x[i]
+        
+        dy = y[i+1]-y[i]
+        
+        derivada = np.append(derivada, dy/dx)
+            
+    return derivada
+                
+
+
+
+
+
+
+    
+
+
+
+
+
+
+#%%
     
 #comentarios:
 

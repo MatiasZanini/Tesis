@@ -12,6 +12,7 @@ import numpy as np
 import funciones as func
 from importlib import reload
 from scipy.signal import savgol_filter as smooth
+import scipy.misc as misc
 
 #%%  ---------------------Recargar el modulo con las funciones----------
 
@@ -80,11 +81,11 @@ func.ploteo_concentracion(CO,duracion,'CO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181203\Trafo gas.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Bobina gas.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
-plt.figure()
+#plt.figure()
 
 plt.subplots(3,1, sharex=True)
 
@@ -413,7 +414,23 @@ plt.xlabel('tiempo (s)')
 plt.ylabel('corriente (mA)')
 
 
+#%%
 
+#------------------------------------Calculo de capacidades experimentales------------------------------
+
+v_deriv = func.derivada_num(t_volt, volt)
+
+largo_deriv = len(v_deriv)
+
+idbd_rec = idbd[:(largo_deriv)]
+
+istr_rec = istr[:(largo_deriv)]
+
+c12_exp = -(np.dot(idbd_rec, v_deriv) / sum(v_deriv**2))
+
+c13_exp = -(np.dot(istr_rec, v_deriv) / sum(v_deriv**2))
+
+print('C12, C13 experimentales, en pF:', c12_exp*1e12, c13_exp*1e12)
 
 
 

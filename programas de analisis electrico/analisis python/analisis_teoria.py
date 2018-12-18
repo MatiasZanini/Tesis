@@ -36,5 +36,33 @@ print('Campo electrico en la posicion r en Volt/m: ', '%.3E' % Decimal(campo))
 print('Matriz de capacidad en faradios:', capacidad)
 
 
+
+#%%
+
+#----------------------------capacidad completa----------------------------------
+
+c11 = capacidad[0][0]
+
+c12 = capacidad[0][1]
+
+c21 = capacidad[1][0]
+
+c22 = capacidad[1][1]
+
+c13 = -c11 -c12  #se usa la propiedad de que la suma de filas y columnas debe dar 0.
+
+c23 = -c21 - c22
+
+c33 = -c13 - c23
+
+capacidad_total = np.array([[c11, c12, c13], [c21, c22, c23], [c13, c23, c33]])
+
+print(capacidad_total)
+
+
+
+#%%
+
+
     
   
