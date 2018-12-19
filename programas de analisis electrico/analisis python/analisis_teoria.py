@@ -79,7 +79,7 @@ signal = np.loadtxt(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\mobilit
 
 
 
-
+#nota: para interpolar la funcion G hay que usar el scipy con interpolate por spline.
 
 
 
