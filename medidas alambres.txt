@@ -1,5 +1,0 @@
-alambre "grueso" = 0.6 mm de diametro
-
-alambre "fino" = 0.4 mm de diametro
-
-el electrodo de teflon tiene puesto un alambre "grueso".

@@ -1,0 +1,18 @@
+Alambres
+
+	alambre "grueso" = 0.6 mm de diametro
+
+	alambre "fino" = 0.4 mm de diametro
+
+	el electrodo de teflon tiene puesto un alambre "grueso".
+
+
+
+
+Electrodos principales
+
+	todos los calados son de 5 mm (alto y profundo)
+	
+	las tuercas tienen una distancia de 40 mm entre centro y centro
+
+	el diametro mayor del disco es de 75 mm
