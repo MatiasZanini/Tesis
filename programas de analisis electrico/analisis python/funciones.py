@@ -179,7 +179,7 @@ def recortar_corriente(t_corr,corr,tper, niter=30, altafrec_rec=True, atenuar_co
         
         for k in range(niter):
         
-            fiteada = fitear(funcaux, t_corr, cor_rec, ([tper,1,1,1]))   
+            fiteada = fitear(funcaux, t_corr, cor_rec, ([tper,max(cor_rec),1,1]))   
             cor_rec=np.array([])
             
             datoscorte=np.array([])
@@ -195,7 +195,7 @@ def recortar_corriente(t_corr,corr,tper, niter=30, altafrec_rec=True, atenuar_co
                 else:
                     cor_rec=np.append(cor_rec,corr[j])
                     
-        return fitear(funcaux,t_corr,cor_rec,([tper,1,1,1])) , cor_rec
+        return fitear(funcaux,t_corr,cor_rec,([tper,max(cor_rec),1,1])) , cor_rec
     
     else:
         cor_rec=np.array([])

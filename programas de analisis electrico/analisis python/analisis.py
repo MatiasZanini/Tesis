@@ -35,7 +35,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181211\Concentracion CO.csv") as csvfile:
+with open(r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181102\Concentracion NO 1.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -81,7 +81,7 @@ func.ploteo_concentracion(CO,duracion,'CO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Bobina gas.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181102\Bobina gas 2.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -112,13 +112,13 @@ plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize 
 
 
 #%% ------------------------------PREVISUALIZACION DE LAS POTENCIAS-------------------------
-cant_periodos=6
+cant_periodos=5
 
 tolerancia_picos= 4 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
 fuente_continua= -11.3 #en kV
 
-alta_frecuencia=False #si es una medicion de alta frecuencia poner True, o False de lo contrario.
+alta_frecuencia=True #si es una medicion de alta frecuencia poner True, o False de lo contrario.
 
 iper, tper = func.calculo_per(cant_periodos, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
 
@@ -418,15 +418,15 @@ plt.ylabel('corriente (mA)')
 
 #------------------------------------Calculo de capacidades experimentales------------------------------
 
-periodo = func.calculo_per(6, t_volt, volt)[1]
+periodo = func.calculo_per(5, t_volt, volt)[1]
 
-v = func.fitear(func.funcaux, t_volt, volt, params_opt = [periodo,1,1,1])
+v = func.fitear(func.funcaux, t_volt, volt, params_opt=([periodo,max(volt),1,1]))
 
 v_deriv = func.derivada_num(t_volt, v) 
 
-#plt.plot(t_volt, volt)
-#
-#plt.plot(t_volt, v)
+plt.plot(t_volt, volt)
+
+plt.plot(t_volt, v)
 
 largo_deriv = len(v_deriv)
 
