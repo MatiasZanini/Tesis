@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 # Integral util para el calculo del potencial en el electrodo. r y z son los puntos donde se 
 # evalua el campo (cilindricas) y zd es la posicion axial del anillo conductor. k es el numero de onda sobre el cual se integra.
 
-def func_int_potencial(k, r, z, zd, r_cond = 70e-3 /2, r_malla = 113.9e-3 /2):
+def func_int_potencial(k, r, z, zd, r_cond = 65e-3 /2, r_malla = 113.9e-3 /2):
     
     #r_cond radio del anillo conductor en metros.
     
@@ -146,11 +146,11 @@ def campo(r, vac, vdc, permit, r_cond = 70e-3 /2, z0 = 2.5e-3, zd1 = 2.5e-3, zd2
             voltajes = np.array([vac-vdc, -vdc])
         
    
-            cargas_instant = np.dot(capacidad, voltajes)
+            cargas_interno = np.dot(capacidad, voltajes)
             
-            q1 = np.append(q1, cargas_instant[0])
+            q1 = cargas_interno[0]
             
-            q2 = np.append(q2,cargas_instant[1]) 
+            q2 = cargas_interno[1] 
             
         else:        
         
@@ -195,108 +195,7 @@ def campo(r, vac, vdc, permit, r_cond = 70e-3 /2, z0 = 2.5e-3, zd1 = 2.5e-3, zd2
 #print(b-b0)
 #    
         
-#%% ---------------------------------INTERPOLACION DE G----------------------------------------------------------
-        
-        
-EN, mob, k_excit, k_disoc  = np.loadtxt(r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\Bolsig\NO\params_NO_100pts.txt', unpack=True)
-    
-G_excit = k_excit/((EN*1e-21)**2 * mob)*100    #en 1/V
 
-G_disoc = k_disoc/((EN*1e-21)**2 * mob)*100    #en 1/V
-
-
-#G_excit_params = interpolate.splrep(EN, G_excit, s=0)
-#
-#G_disoc_params = interpolate.splrep(EN, G_disoc, s=0)
-
-G_excit_suave = interpolate.interp1d(EN*1e-21, G_excit)
-
-G_disoc_suave = interpolate.interp1d(EN*1e-21, G_disoc)
-
-
-EN_suave = np.arange(1,1000, 0.1)*1e-21
-
-#G_excit_suave = interpolate.splev(EN_suave, G_excit_params, der = 0)
-#
-#G_disoc_suave = interpolate.splev(EN_suave, G_disoc_params, der = 0)
-
-
-
-
-
-plt.semilogy(EN_suave*1e21, G_excit_suave(EN_suave), label='G(excitación)')    
-
-plt.semilogy(EN_suave*1e21, G_disoc_suave(EN_suave), label= 'G(disociación)')
-
-plt.xlabel('E/N (Td)')
-
-plt.ylabel('G')
-
-plt.legend()
-
-plt.grid()    
-    
-#%% -------------------------------------------EFICIENCIA TEORICA-------------------------------------------------
-
-#NOTA IMPORTANTE: es importante correr primero la seccion de acondicionamiento de señales en analisis.py para definir idbd, istr y volt
-#para evitar esto, despues se puede pasar esto a analisis.py y llamar a las funciones de este modulo desde analisis.py.
-
-
-
-#------------------------------------------------CONTRIBUCION CUERPO-----------------------------------------------
-
-i_tot = idbd + istr
-
-vdc=-9.02e3
-
-nNO = 500e-6
-
-Q = np.mean(caudal)
-
-def integrando_cuerpo(r, vac, vdc):
-    
-    #N = 2.45e25
-    
-    E = campo(r, vac, vdc, 'pvc')[0] 
-    
-    I = E*(2*G_disoc_suave(E/2.45 * 10e-4) + G_excit_suave(E/2.45 * 10e-4))
-    
-    return I
-
-
-numerador = 0
-
-for j in range(4*iper):
-
-    numerador += i_tot[j] * integrate.quad(integrando_cuerpo, 70e-3 /2, 113.9e-3 /2, args = (volt[j], vdc))[0]
-    
-
-efic_cuerpo = (numerador/(4*iper-1)) / (100 * ctes.e * Q * nNO)
-    
-
-#%% ---------------------------------------------CONTRIBUCION CABEZA----------------------------------------------
-
-def Eh(r):
-
-    Ehmax = 120e3/1e-2 # en V/m
-    
-    rhmax = 9e-4 # en m 
-
-    return Ehmax * rhmax**2 / r**2
-
-
-
-def integrando_cabeza(r):
-    
-    return (2*G_disoc_suave(Eh(r)/(2.69e25)) + G_excit_suave(Eh(r)/(2.69e25)) )*Eh(r)
-
-
-prueba = Eh(35e-3)/(2.69e25)  # EVALUADO EN EL rmin.. Da < 1 Td  lo cual se va por debajo de la interpolación
-
-prueba2 = Eh(113.9e-3)/(2.69e25) #EVALUADO EN EL rmax.. Da < 1 Td lo cual se va por debajo de la interpolación.
-
-
-#una vez tenga el integrando bien evaluado, ya puedo simplemente integrarlo numericamente con scipy y multiplicarlo por la corriente media.
 
 
 
