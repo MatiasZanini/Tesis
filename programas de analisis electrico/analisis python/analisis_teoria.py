@@ -244,5 +244,61 @@ print('maximo r para integrar=', rmax)
 #El rmax elegido es 19e-3
 
 
+#%%----------------------------ANALISIS PARA EL CO----------------------------
+
+
+EN_co, mob_co, k_disoc_N2, k_disoc_CO, k_disoc_H2O = np.loadtxt(r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\Bolsig\20190227\CO\params_CO_100pts.txt', unpack=True)
+
+
+G_disoc_N2 = k_disoc_N2/((EN_co*1e-21)**2 * mob_co)*100    #en 1/V
+
+G_disoc_CO = k_disoc_CO/((EN_co*1e-21)**2 * mob_co)*100    #en 1/V
+
+G_disoc_H2O = k_disoc_H2O/((EN_co*1e-21)**2 * mob_co)*100    #en 1/V
+
+
+
+
+G_disoc_N2_suave = interpolate.interp1d(EN_co*1e-21, G_disoc_N2)
+
+G_disoc_CO_suave = interpolate.interp1d(EN_co*1e-21, G_disoc_CO)
+
+G_disoc_H2O_suave = interpolate.interp1d(EN_co*1e-21, G_disoc_H2O)
+
+
+EN_co_suave = np.arange(1,1000, 0.1)*1e-21
+
+
+
+
+plt.semilogy(EN_co_suave*1e21, G_disoc_N2_suave(EN_co_suave), label='G(disociación N2)')    
+
+plt.semilogy(EN_co_suave*1e21, G_disoc_CO_suave(EN_co_suave), label='G(disociación CO)') 
+
+plt.semilogy(EN_co_suave*1e21, G_disoc_H2O_suave(EN_co_suave), label='G(disociación H2O)') 
+
+plt.xlabel('E/N (Td)')
+
+plt.ylabel('G')
+
+plt.legend()
+
+plt.grid()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
   
