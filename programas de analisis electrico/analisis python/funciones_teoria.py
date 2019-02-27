@@ -200,21 +200,21 @@ def campo(r, vac, vdc, permit, r_cond = 70e-3 /2, z0 = 2.5e-3, zd1 = 2.5e-3, zd2
         
 EN, mob, k_excit, k_disoc  = np.loadtxt(r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\Bolsig\NO\params_NO_100pts.txt', unpack=True)
     
-G_excit = k_excit/((EN*1e-21)**2 * mob)*100    
+G_excit = k_excit/((EN*1e-21)**2 * mob)*100    #en 1/V
 
-G_disoc = k_disoc/((EN*1e-21)**2 * mob)*100
+G_disoc = k_disoc/((EN*1e-21)**2 * mob)*100    #en 1/V
 
 
 #G_excit_params = interpolate.splrep(EN, G_excit, s=0)
 #
 #G_disoc_params = interpolate.splrep(EN, G_disoc, s=0)
 
-G_excit_suave = interpolate.interp1d(EN, G_excit)
+G_excit_suave = interpolate.interp1d(EN*1e-21, G_excit)
 
-G_disoc_suave = interpolate.interp1d(EN, G_disoc)
+G_disoc_suave = interpolate.interp1d(EN*1e-21, G_disoc)
 
 
-EN_suave = np.arange(1,1000, 0.1)
+EN_suave = np.arange(1,1000, 0.1)*1e-21
 
 #G_excit_suave = interpolate.splev(EN_suave, G_excit_params, der = 0)
 #
@@ -224,9 +224,9 @@ EN_suave = np.arange(1,1000, 0.1)
 
 
 
-plt.semilogy(EN_suave, G_excit_suave(EN_suave), label='G(excitación)')    
+plt.semilogy(EN_suave*1e21, G_excit_suave(EN_suave), label='G(excitación)')    
 
-plt.semilogy(EN_suave, G_disoc_suave(EN_suave), label= 'G(disociación)')
+plt.semilogy(EN_suave*1e21, G_disoc_suave(EN_suave), label= 'G(disociación)')
 
 plt.xlabel('E/N (Td)')
 
@@ -240,6 +240,10 @@ plt.grid()
 
 #NOTA IMPORTANTE: es importante correr primero la seccion de acondicionamiento de señales en analisis.py para definir idbd, istr y volt
 #para evitar esto, despues se puede pasar esto a analisis.py y llamar a las funciones de este modulo desde analisis.py.
+
+
+
+#------------------------------------------------CONTRIBUCION CUERPO-----------------------------------------------
 
 i_tot = idbd + istr
 
@@ -269,6 +273,48 @@ for j in range(4*iper):
 
 efic_cuerpo = (numerador/(4*iper-1)) / (100 * ctes.e * Q * nNO)
     
+
+#%% ---------------------------------------------CONTRIBUCION CABEZA----------------------------------------------
+
+def Eh(r):
+
+    Ehmax = 120e3/1e-2 # en V/m
+    
+    rhmax = 9e-4 # en m 
+
+    return Ehmax * rhmax**2 / r**2
+
+
+
+def integrando_cabeza(r):
+    
+    return (2*G_disoc_suave(Eh(r)/(2.69e25)) + G_excit_suave(Eh(r)/(2.69e25)) )*Eh(r)
+
+
+prueba = Eh(35e-3)/(2.69e25)  # EVALUADO EN EL rmin.. Da < 1 Td  lo cual se va por debajo de la interpolación
+
+prueba2 = Eh(113.9e-3)/(2.69e25) #EVALUADO EN EL rmax.. Da < 1 Td lo cual se va por debajo de la interpolación.
+
+
+#una vez tenga el integrando bien evaluado, ya puedo simplemente integrarlo numericamente con scipy y multiplicarlo por la corriente media.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     
     
