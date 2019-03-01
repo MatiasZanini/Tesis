@@ -69,6 +69,10 @@ def ploteo_concentracion(gas,duracion,nombre):
     
     tiempo=np.linspace(0,duracion,puntos)
     plt.plot(tiempo,gas, linewidth = 3)
+#    plt.axvline(26.26, color = 'r', linewidth = 1.5, linestyle = '--')
+#    plt.axvline(39.16, color = 'r', linewidth = 1.5, linestyle = '--')
+#    plt.axvline(53.64, color = 'r',linewidth = 1.5, linestyle = '--')
+#    plt.axvline(66.46, color = 'r', linewidth = 1.5, linestyle = '--')
     plt.tick_params(axis = 'both', which = 'both', width = 2, length = 4, labelsize = 20)
     
     plt.xlabel('Tiempo (min)', fontsize = 20)
@@ -335,13 +339,13 @@ def potencia_prom(cant_per_iter, voltaje_continua, alta_frec, tolerancia_corte_s
         
         coravg_idbd_tot = np.append(coravg_idbd_tot, coravg_idbd_i)
         
-    potencia_istr = np.mean(pot_istr_tot)
+    potencia_istr = np.array([np.mean(pot_istr_tot) , np.std(pot_istr_tot)])
     
-    potencia_idbd = np.mean(pot_idbd_tot)
+    potencia_idbd = np.array([np.mean(pot_idbd_tot) , np.std(pot_idbd_tot)])
     
-    cor_media_istr = np.mean(coravg_istr_tot)
+    cor_media_istr = np.array([np.mean(coravg_istr_tot) , np.std(coravg_istr_tot)])
     
-    cor_media_idbd = np.mean(coravg_idbd_tot)
+    cor_media_idbd = np.array([np.mean(coravg_idbd_tot) , np.std(coravg_idbd_tot)])
     
     return potencia_istr, potencia_idbd, cor_media_istr, cor_media_idbd
 

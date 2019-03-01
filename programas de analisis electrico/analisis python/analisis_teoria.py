@@ -2,7 +2,7 @@
 """
 Created on Mon Dec 17 16:02:41 2018
 
-@author: Matías
+@author: Mati
 """
 
 import matplotlib.pyplot as plt
@@ -75,7 +75,7 @@ print(capacidad_total)
 #%% ---------------------------------INTERPOLACION DE G----------------------------------------------------------
         
         
-EN, mob, k_excit, k_disoc  = np.loadtxt(r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\Bolsig\20190226\Bolsig\NO\params_NO_100pts.txt', unpack=True)
+EN, mob, k_excit, k_disoc  = np.loadtxt(r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\Bolsig\20190227\NO\params_NO_100pts.txt', unpack=True)
     
 G_excit = k_excit/((EN*1e-21)**2 * mob)*100    #en 1/V
 
@@ -99,7 +99,7 @@ EN_suave = np.arange(1,1000, 0.1)*1e-21
 
 
 
-
+plt.figure()
 
 plt.semilogy(EN_suave*1e21, G_excit_suave(EN_suave), label='G(excitación)')    
 
@@ -121,6 +121,185 @@ N=2.69e25 #en 1/m^3
 vdc=-9.02e3
 
 nNO = 500e-6 * N 
+
+Q = np.mean(caudal) * 10e-3/3600
+
+dielectrico = 'teflon'
+
+
+
+#iper=2500   #si se trabaja con ventana descomentar esto.
+
+
+numerador = 0
+
+
+puntos_interpol = 40
+
+rmin = 72e-3 /2
+rmax = 113.9e-3 /2
+
+
+r_interpol = np.linspace(rmin, rmax, puntos_interpol)
+
+for j in range(iper):
+
+    if istr_aux[j] > 0:
+    
+    
+        volt_inst = volt[j]
+        
+        E_inst = np.array([])
+        
+        for l in range(puntos_interpol):
+                    
+            E_inst = np.append(E_inst, fteo.campo(r_interpol[l], volt_inst, vdc, dielectrico)[0])
+            
+        
+        E_interpol = interpolate.interp1d(r_interpol, E_inst)
+            
+        def integrando_cuerpo(r):
+        
+            #N = 2.45e25
+        
+            E = abs(E_interpol(r)) 
+        
+            I = E*(2*G_disoc_suave(E/N) + G_excit_suave(E/N))
+        
+            return I
+            
+        
+        numerador += istr_aux[j] * integrate.quad(integrando_cuerpo, rmin, rmax)[0]
+    
+    print(j,numerador)
+
+efic_cuerpo = (numerador/(iper+1)) / (100 * ctes.e * Q * nNO)
+
+print('Aporte a la eficiencia del cuerpo en %:' , efic_cuerpo*100)
+    
+
+#%% ---------------------------------------------CONTRIBUCION CABEZA----------------------------------------------
+
+N=2.69e25 #en 1/m^3
+
+def Eh(r):
+
+    Ehmax = 120e3/1e-2 # en V/m
+    
+    rhmax = 9e-4 # en m 
+
+    return Ehmax * rhmax**2 / r**2
+
+
+
+def integrando_cabeza(r):
+    
+    return (2*G_disoc_suave(Eh(r)/(2.69e25)) + G_excit_suave(Eh(r)/(2.69e25)) )*Eh(r)
+
+
+
+def efic_cabeza(istr_media, Np, Q):
+    
+    denom = 100 * ctes.e * Q * Np
+    
+    return istr_media * (integrate.quad(integrando_cabeza, 9e-4, 19e-3, limit=100))[0] / denom
+
+
+i_media = cor_media_istr
+
+nNO = 510e-6 * N
+
+Q = np.mean(caudal)*1e-3/ 3600
+
+efic_cabeza_teo = efic_cabeza(i_media, nNO, Q)
+
+print('Aporte a la eficiencia de la cabeza en %:', efic_cabeza_teo*100)
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+#%%
+
+#esta cuenta es para hallar el máximo r para el cual vamos a integrar el campo de la cabeza
+#del streamer. Esto es porque, si bien la integral es hasta infinito, cae rapidamente. Y al
+#irnos a un valor muy chico de campo reducido, nos vamos fuera del rango donde está 
+#interpolada la G. Entonces truncamos hasta ese r la integral y listo.
+
+rmax = 9e-4
+Eredmax = Eh(9e-4)*1e21/N
+
+while Eredmax>1:
+    rmax += 1e-4
+    Eredmax = Eh(rmax)*1e21/N
+    
+print('maximo r para integrar=', rmax) 
+
+#El rmax elegido es 19e-3
+
+
+#%%-------------------------------------------ANALISIS PARA EL CO-------------------------------------------------
+
+
+EN_co, mob_co, k_disoc_N2, k_disoc_CO, k_disoc_H2O = np.loadtxt(r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\Bolsig\20190227\CO\params_CO_100pts.txt', unpack=True)
+
+
+G_disoc_N2 = k_disoc_N2/((EN_co*1e-21)**2 * mob_co)*100    #en 1/V
+
+G_disoc_CO = k_disoc_CO/((EN_co*1e-21)**2 * mob_co)*100    #en 1/V
+
+G_disoc_H2O = k_disoc_H2O/((EN_co*1e-21)**2 * mob_co)*100    #en 1/V
+
+
+
+
+G_disoc_N2_suave = interpolate.interp1d(EN_co*1e-21, G_disoc_N2)
+
+G_disoc_CO_suave = interpolate.interp1d(EN_co*1e-21, G_disoc_CO)
+
+G_disoc_H2O_suave = interpolate.interp1d(EN_co*1e-21, G_disoc_H2O)
+
+
+EN_co_suave = np.arange(1,1000, 0.1)*1e-21
+
+
+
+
+plt.semilogy(EN_co_suave*1e21, G_disoc_N2_suave(EN_co_suave), label='G(disociación N2)')    
+
+plt.semilogy(EN_co_suave*1e21, G_disoc_CO_suave(EN_co_suave), label='G(disociación CO)') 
+
+plt.semilogy(EN_co_suave*1e21, G_disoc_H2O_suave(EN_co_suave), label='G(disociación H2O)') 
+
+plt.xlabel('E/N (Td)')
+
+plt.ylabel('G')
+
+plt.legend()
+
+plt.grid()
+
+
+#%%------------------------------------------------CONTRIBUCION CUERPO-----------------------------------------------
+N=2.69e25 #en 1/m^3
+
+vdc=-9.02e3
+
+nCO = 350e-6 * N 
+
+nH2O = 10e-6 * N
+
+
+
+
 
 Q = np.mean(caudal) * 10e-3/3600
 
@@ -164,7 +343,7 @@ for j in range(iper):
         
             E = abs(E_interpol(r)) 
         
-            I = E*(2*G_disoc_suave(E/N) + G_excit_suave(E/N))
+            I = E*(nCO/N * G_disoc_CO_suave(E/N) + 0.5 * nH2O/N * G_disoc_H2O_suave(E/N) + 0.7 * G_disoc_N2_suave(E/N))
         
             return I
             
@@ -173,7 +352,9 @@ for j in range(iper):
     
     print(j,numerador)
 
-efic_cuerpo = (numerador/(iper+1)) / (100 * ctes.e * Q * nNO)
+efic_cuerpo = (numerador/(iper+1)) / (100 * ctes.e * Q * nCO)
+
+print('La eficiencia porcentual predicha por el modelo es:', efic_cuerpo*100)
     
 
 #%% ---------------------------------------------CONTRIBUCION CABEZA----------------------------------------------
@@ -190,9 +371,9 @@ def Eh(r):
 
 
 
-def integrando_cabeza(r):
+def integrando_cabeza_co(r):
     
-    return (2*G_disoc_suave(Eh(r)/(2.69e25)) + G_excit_suave(Eh(r)/(2.69e25)) )*Eh(r)
+    return (nCO/N * G_disoc_CO_suave(Eh(r)/N) + 0.5 * nH2O/N * G_disoc_H2O_suave(Eh(r)/N) + 0.7 * G_disoc_N2_suave(Eh(r)/N) )*Eh(r)
 
 
 
@@ -200,93 +381,18 @@ def efic_cuerpo(istr_media, Np, Q):
     
     denom = 100 * ctes.e * Q * Np
     
-    return istr_media * (integrate.quad(integrando_cabeza, 9e-4, 19e-3, limit=100))[0] / denom
+    return istr_media * (integrate.quad(integrando_cabeza_co, 9e-4, 19e-3, limit=200))[0] / denom
 
 
-i_media = 0.34080646730754016*1e-3
+i_media = 0.6197209574193261*1e-3
 
-nNO = 510e-6 * N
+nCO = 350e-6 * N
 
 Q = np.mean(caudal)*1e-3/ 3600
 
-efic_cuerpo_teo = efic_cuerpo(i_media, nNO, Q)
+efic_cuerpo_teo = efic_cuerpo(i_media, nCO, Q)
 
-print('Aporte a la eficiencia de la cabeza:', efic_cuerpo_teo)
-    
-    
-    
-    
-    
-    
-    
-    
-
-
-#una vez tenga el integrando bien evaluado, ya puedo simplemente integrarlo numericamente con scipy y multiplicarlo por la corriente media.
-
-
-#%%
-
-#esta cuenta es para hallar el máximo r para el cual vamos a integrar el campo de la cabeza
-#del streamer. Esto es porque, si bien la integral es hasta infinito, cae rapidamente. Y al
-#irnos a un valor muy chico de campo reducido, nos vamos fuera del rango donde está 
-#interpolada la G. Entonces truncamos hasta ese r la integral y listo.
-
-rmax = 9e-4
-Eredmax = Eh(9e-4)*1e21/N
-
-while Eredmax>1:
-    rmax += 1e-4
-    Eredmax = Eh(rmax)*1e21/N
-    
-print('maximo r para integrar=', rmax) 
-
-#El rmax elegido es 19e-3
-
-
-#%%----------------------------ANALISIS PARA EL CO----------------------------
-
-
-EN_co, mob_co, k_disoc_N2, k_disoc_CO, k_disoc_H2O = np.loadtxt(r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\Bolsig\20190227\CO\params_CO_100pts.txt', unpack=True)
-
-
-G_disoc_N2 = k_disoc_N2/((EN_co*1e-21)**2 * mob_co)*100    #en 1/V
-
-G_disoc_CO = k_disoc_CO/((EN_co*1e-21)**2 * mob_co)*100    #en 1/V
-
-G_disoc_H2O = k_disoc_H2O/((EN_co*1e-21)**2 * mob_co)*100    #en 1/V
-
-
-
-
-G_disoc_N2_suave = interpolate.interp1d(EN_co*1e-21, G_disoc_N2)
-
-G_disoc_CO_suave = interpolate.interp1d(EN_co*1e-21, G_disoc_CO)
-
-G_disoc_H2O_suave = interpolate.interp1d(EN_co*1e-21, G_disoc_H2O)
-
-
-EN_co_suave = np.arange(1,1000, 0.1)*1e-21
-
-
-
-
-plt.semilogy(EN_co_suave*1e21, G_disoc_N2_suave(EN_co_suave), label='G(disociación N2)')    
-
-plt.semilogy(EN_co_suave*1e21, G_disoc_CO_suave(EN_co_suave), label='G(disociación CO)') 
-
-plt.semilogy(EN_co_suave*1e21, G_disoc_H2O_suave(EN_co_suave), label='G(disociación H2O)') 
-
-plt.xlabel('E/N (Td)')
-
-plt.ylabel('G')
-
-plt.legend()
-
-plt.grid()
-
-
-
+print('Aporte a la eficiencia porcentual de la cabeza:', efic_cuerpo_teo*100)
 
 
 

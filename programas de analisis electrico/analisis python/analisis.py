@@ -35,7 +35,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Concentracion NO 1.csv") as csvfile:
+with open(r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181210\Concentracion NO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -73,15 +73,18 @@ print('duración de la medición total:',duracion,'minutos')
 #la funcion pide el array con la medicion, la duracion total y 
 #el nombre que se quiera en el label 
 
+#NO=NO-40
+
 plt.figure()
 
-func.ploteo_concentracion(CO,duracion,'CO')
+func.ploteo_concentracion(NO,duracion,'NO')
+
 
 #%%----------------CARGA LOS DATOS DE POTENCIA MEDIDOS Y LOS GRAFICA------------------------------------------------------
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181102\Bobina gas 2.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181210\Trafo gas 3.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -90,35 +93,35 @@ t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 plt.subplots(3,1, sharex=True)
 
 g1 = plt.subplot(3,1,1)
-plt.plot(t_volt*1000,volt)
-plt.xlabel('tiempo (ms)', fontsize=20)
-plt.ylabel('Voltaje entrada (V)', fontsize=12)
+plt.plot(t_volt*1000,volt/1000)
+#plt.xlabel('tiempo (ms)', fontsize=20)
+plt.ylabel('V$_{ac}$ (kV)', fontsize=18)
 plt.grid(True)
 plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
 
 plt.subplot(3,1,2, sharex=g1)
-plt.plot(t_idbd*1000,idbd*1000,'.-')
-plt.xlabel('tiempo (ms)', fontsize=20)
-plt.ylabel('Corriente de DBD (mA)', fontsize=12)
+plt.plot(t_idbd*1000,idbd*1000)
+#plt.xlabel('tiempo (ms)', fontsize=20)
+plt.ylabel(r'I$_{dbd} $ (mA)', fontsize=18)
 plt.grid(True)
 plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
 
 plt.subplot(3,1,3, sharex=g1)
-plt.plot(t_istr*1000,istr*1000, '.-')
+plt.plot(t_istr*1000,istr*1000)
 plt.xlabel('tiempo (ms)', fontsize=20)
-plt.ylabel('Corriente de streamers (mA)', fontsize=12)
+plt.ylabel('I$_{str}$ (mA)', fontsize=18)
 plt.grid(True)
 plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
 
 
 #%% ------------------------------PREVISUALIZACION DE LAS POTENCIAS-------------------------
-cant_periodos=5
+cant_periodos=6
 
-tolerancia_picos= 4 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+tolerancia_picos= 2 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
 fuente_continua= -9.02 #en kV
 
-alta_frecuencia=True #si es una medicion de alta frecuencia poner True, o False de lo contrario.
+alta_frecuencia=False #si es una medicion de alta frecuencia poner True, o False de lo contrario.
 
 iper, tper = func.calculo_per(cant_periodos, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
 
@@ -130,10 +133,10 @@ print('voltaje pico a pico en kV:', func.pico_pico(volt)/1000)
 
 plt.figure()
 plt.plot(t_istr[:iper]*1000,istr_aux[:iper]*1000)
-plt.xlabel('tiempo (ms)')
-plt.ylabel('Corriente de streamers (mA)')
+plt.xlabel('tiempo (ms)', fontsize=20)
+plt.ylabel('Corriente de streamers (mA)', fontsize=20)
 plt.grid()
-
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
 
 #%%
 iper, tper = func.calculo_per(cant_periodos, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
@@ -146,18 +149,18 @@ print('Potencia media de DBD en W:', potencia_idbd)
 print('Corriente media de DBD en mA:', cor_media_idbd*1000)
 
 plt.figure()
-plt.plot(t_istr[:iper]*1000,idbd_aux[:iper]*1000)
-plt.xlabel('tiempo (ms)')
-plt.ylabel('Corriente de DBD (mA)')
+plt.plot(t_istr[2*iper:3*iper]*1000,idbd_aux[2*iper:3*iper]*1000)
+plt.xlabel('tiempo (ms)', fontsize=20)
+plt.ylabel('Corriente de DBD (mA)', fontsize=20)
 plt.grid()
-
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
 
 
 #%%  ------------------------------potencia con ventana-----------------------------
 
-path_comp = r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181203\Trafo gas.csv'
+path_comp = r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181210\Trafo gas 1.csv'
 
-path = r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181203\Trafo ventana 2.csv'
+path = r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181210\Trafo ventana gas 1.csv'
 
 fuente_continua= -9.02 #en kV
 
@@ -174,7 +177,7 @@ potencia_istr, cor_media_istr, istr_aux = func.potencia_ventana(t_comp, volt_com
 
 print('Potencia media de streamers en W:', potencia_istr)
 print('Corriente media de streamers en mA:', cor_media_istr*1000)
-
+print('voltaje pico a pico en kV:', func.pico_pico(volt_comp)/1000)
 plt.figure()
 plt.plot(t_istr*1000,istr_aux*1000)
 plt.xlabel('tiempo (ms)')
@@ -191,8 +194,8 @@ tolerancia_picos = 1
 potencia_idbd, cor_media_idbd, idbd_aux = func.potencia_ventana(t_comp, volt_comp, t_idbd, idbd, volt, cant_periodos, v_dc_in=fuente_continua*1000 , altafrec=alta_frecuencia, streamer=False,  tolerancia_corte=tolerancia_picos)
 
 
-print('Potencia media de streamers en W:', potencia_idbd)
-print('Corriente media de streamers en mA:', cor_media_idbd*1000)
+print('Potencia media de dbd en W:', potencia_idbd)
+print('Corriente media de dbd en mA:', cor_media_idbd*1000)
 
 plt.figure()
 plt.plot(t_idbd*1000,idbd_aux*1000)
@@ -245,30 +248,31 @@ plt.grid(True)
 
 cant_per_iter=6 #cantidad de periodos que hay en la medicion "a ojo"
 
-voltaje_continua = -9.03 #indicar voltaje de la fuente externa en kilovolts
+voltaje_continua = -9.02 #indicar voltaje de la fuente externa en kilovolts
 
-alta_frec = False  # indicar si se trata de una medicion de alta frecuencia (True) o baja (False).
+alta_frec = True  # indicar si se trata de una medicion de alta frecuencia (True) o baja (False).
 
-tolerancia_corte_str= 4  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+tolerancia_corte_str= 1  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
 tolerancia_corte_dbd= 1
 
-path = r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181102"
+path = r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181210"
 
-subpath= 'Trafo gas '  #indicar nombre generico de las mediciones
+subpath= 'Bobina gas '  #indicar nombre generico de las mediciones
 
-inicio_med = 9 # indicar primer numero de la tira de mediciones
+inicio_med = 1 # indicar primer numero de la tira de mediciones
 
-fin_med = 12 # indicar ultimo numero de la tira de mediciones
+fin_med = 2 # indicar ultimo numero de la tira de mediciones
 
     
 potencia_istr, potencia_idbd, cor_media_istr, cor_media_idbd = func.potencia_prom(cant_per_iter, voltaje_continua, alta_frec, tolerancia_corte_str, tolerancia_corte_dbd, path, subpath, inicio_med, fin_med)
 
-print('Potencia media de streamers en W:', potencia_istr)
-print('Corriente media de streamers en mA:', cor_media_istr*1000)
 
-print('Potencia media de DBD en W:', potencia_idbd)
-print('Corriente media de DBD en mA:', cor_media_idbd*1000)
+print('Potencia media de streamers en W:', potencia_istr)               #valor + desviacion estandar
+print('Corriente media de streamers en mA:', cor_media_istr*1000)       #valor + desviacion estandar
+
+print('Potencia media de DBD en W:', potencia_idbd)                     #valor + desviacion estandar
+print('Corriente media de DBD en mA:', cor_media_idbd*1000)             #valor + desviacion estandar
 
 
 
@@ -285,9 +289,9 @@ print('Corriente media de DBD en mA:', cor_media_idbd*1000)
 
 potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio=103 #poner el minuto en que se encendió la descarga
+inicio=42 #poner el minuto en que se encendió la descarga
 
-fin=129  #poner el minuto en que finalizó la descarga
+fin=52  #poner el minuto en que finalizó la descarga
 
 efic_porcentual, efic_ener = func.eficiencia(duracion, NO, caudal, potencia_final, inicio, fin)
 
@@ -367,7 +371,7 @@ finally:
 
 #%%
     
-#medicion de Jorge
+#-----------------------------------------------------medicion de Jorge------------------------------------------------
 matriz=[]
 with open(r'C:\Users\Matías\Documents\GitHub\Tesis\20181016(Jorge)\reactor jorge.csv') as csvfile:
         reader = csv.reader(csvfile) # change contents to floats
@@ -398,7 +402,7 @@ t_volt=np.append(t_volt,0)
 
 #%%
 
-#Probar la funcion recortar
+#---------------------------------------------------PRUEBA DE LA FUNCION RECORTAR----------------------------------------------------
 
 fit, rec =func.recortar_corriente(t_istr,istr,tper,niter=100) #guarda la funcion recortada y su fiteo
 
@@ -413,6 +417,56 @@ plt.plot(t_istr,(istr-fit)*1000)
 
 plt.xlabel('tiempo (s)')
 plt.ylabel('corriente (mA)')
+
+#%%
+
+fit0, rec0 = func.recortar_corriente(t_istr, istr, tper, niter=0)
+
+fit1, rec1 = func.recortar_corriente(t_istr, istr, tper, niter=1)
+
+fit2, rec2 = func.recortar_corriente(t_istr, istr, tper, niter=2)
+
+fit100, rec100 = func.recortar_corriente(t_istr, istr, tper, niter=100)
+
+#plt.figure()
+#plt.plot(t_istr[iper:3*iper], istr[iper:3*iper])
+#plt.plot(t_istr[iper:3*iper], fit100[iper:3*iper])
+
+#COMPARAR UNA FUNCION FITEADA Y SU RECORTADA, CON LAS DEMAS
+
+plt.subplots(1,3, sharey=True)
+
+g1 = plt.subplot(1,3,1)
+plt.plot(t_istr[iper:3*iper]*1e3, istr[iper:3*iper]*1e3)
+plt.plot(t_istr[iper:3*iper]*1e3, fit0[iper:3*iper]*1e3, label = 'Ajuste sinusoidal sin iterar')
+plt.axhline(0.004640026728609554*1e3,linewidth = 1.5, color = 'r', linestyle = '--', label= 'Valor máximo del ajuste sin iterar')
+plt.xlabel('tiempo (ms)', fontsize=20)
+plt.ylabel('I$_{str}$ (ms)', fontsize=18)
+plt.legend(fontsize = 12)
+plt.grid(False)
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
+
+plt.subplot(1,3,2, sharex=g1)
+plt.plot(t_istr[iper:3*iper]*1e3, istr[iper:3*iper]*1e3)
+plt.plot(t_istr[iper:3*iper]*1e3, fit1[iper:3*iper]*1e3, label = '1 iteración')
+plt.axhline(0.004640026728609554*1e3,linewidth = 1.5, color = 'r', linestyle = '--')
+plt.xlabel('tiempo (ms)', fontsize=20)
+#plt.ylabel(r'I$_{dbd} $ (mA)', fontsize=18)
+plt.grid(False)
+plt.legend(fontsize = 12)
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
+
+plt.subplot(1,3,3, sharex=g1)
+plt.plot(t_istr[iper:3*iper]*1e3, istr[iper:3*iper]*1e3)
+plt.plot(t_istr[iper:3*iper]*1e3, fit100[iper:3*iper]*1e3)
+plt.axhline(0.004640026728609554*1e3,linewidth = 1.5, color = 'r', linestyle = '--', label = '100 iteraciones')
+plt.xlabel('tiempo (ms)', fontsize=20)
+#plt.ylabel('I$_{str}$ (mA)', fontsize=18)
+plt.grid(False)
+plt.legend(fontsize = 12)
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
+
+
 
 
 #%%
