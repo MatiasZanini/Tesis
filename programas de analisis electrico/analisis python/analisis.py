@@ -35,7 +35,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181210\Concentracion NO.csv") as csvfile:
+with open(r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181211\Concentracion CO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -77,17 +77,18 @@ print('duración de la medición total:',duracion,'minutos')
 
 plt.figure()
 
-func.ploteo_concentracion(NO,duracion,'NO')
+func.ploteo_concentracion(CO,duracion,'CO')
 
 
 #%%----------------CARGA LOS DATOS DE POTENCIA MEDIDOS Y LOS GRAFICA------------------------------------------------------
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181210\Trafo gas 3.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181211\Trafo gas 2.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
+#istr = istr/10 # esto se descomenta en la medicion del  22/10 que tenia el error de la punta x10
 #plt.figure()
 
 plt.subplots(3,1, sharex=True)
@@ -252,21 +253,24 @@ voltaje_continua = -9.02 #indicar voltaje de la fuente externa en kilovolts
 
 alta_frec = True  # indicar si se trata de una medicion de alta frecuencia (True) o baja (False).
 
-tolerancia_corte_str= 1  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+tolerancia_corte_str= 2  # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
 tolerancia_corte_dbd= 1
 
-path = r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181210"
+path = r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181102"
 
 subpath= 'Bobina gas '  #indicar nombre generico de las mediciones
 
-inicio_med = 1 # indicar primer numero de la tira de mediciones
+inicio_med = 16 # indicar primer numero de la tira de mediciones
 
-fin_med = 2 # indicar ultimo numero de la tira de mediciones
+fin_med = 19 # indicar ultimo numero de la tira de mediciones
 
     
 potencia_istr, potencia_idbd, cor_media_istr, cor_media_idbd = func.potencia_prom(cant_per_iter, voltaje_continua, alta_frec, tolerancia_corte_str, tolerancia_corte_dbd, path, subpath, inicio_med, fin_med)
 
+#potencia_istr = potencia_istr/10   #solo para la medicion del 22/10 que tuvo los problemas de punta x10
+#
+#cor_media_istr = cor_media_istr/10 # idem
 
 print('Potencia media de streamers en W:', potencia_istr)               #valor + desviacion estandar
 print('Corriente media de streamers en mA:', cor_media_istr*1000)       #valor + desviacion estandar
@@ -289,11 +293,11 @@ print('Corriente media de DBD en mA:', cor_media_idbd*1000)             #valor +
 
 potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio=42 #poner el minuto en que se encendió la descarga
+inicio= 12 #poner el minuto en que se encendió la descarga
 
-fin=52  #poner el minuto en que finalizó la descarga
+fin=23  #poner el minuto en que finalizó la descarga
 
-efic_porcentual, efic_ener = func.eficiencia(duracion, NO, caudal, potencia_final, inicio, fin)
+efic_porcentual, efic_ener = func.eficiencia(duracion, CO, caudal, potencia_final, inicio, fin)
 
 print('Potencia total en W:', potencia_final)
 print('eficiencia porcentual:', efic_porcentual, '%')
@@ -306,7 +310,7 @@ print('eficiencia por potencia:',efic_ener,'mol/(kW H)')
 
 
 #%% -----------------------------------Analisis de un pico---------------------------
-path= r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Pico trafo 1.csv"
+path= r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181211\Pico bobina 1.csv"
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -327,7 +331,7 @@ t_istr_aux = t_istr #[pico_central:]
 
 ruido = np.std(pico_auxiliar[:100])                                        #dejando el ruido
 
-inicio_pico = np.where(pico_auxiliar >= ruido*5)[0][0]                     #dejando el ruido (cambiar el factor que multiplica al ruido, acorde a la medicion)
+inicio_pico = np.where(pico_auxiliar >= ruido*30)[0][0]                     #dejando el ruido (cambiar el factor que multiplica al ruido, acorde a la medicion)
 
 #inicio_pico = np.where(pico_auxiliar>= 0.05)[0][0]                        # eliminando ruido
 
@@ -348,11 +352,14 @@ duracion_pico = t_istr[fin_pico]-t_istr[inicio_pico]
 
 print('Duracion del pico en microsegundos:' , duracion_pico *1e6)
 
-plt.plot(t_istr_aux*1000, pico_auxiliar)
-plt.plot(t_istr_aux[inicio_pico:fin_pico]*1000, pico_auxiliar[inicio_pico:fin_pico], '.-')
-plt.xlabel('tiempo (ms)')
-plt.ylabel('Corriente de streamers (mA)')
-plt.grid(True)
+plt.plot((t_istr_aux-t_istr_aux[0])*1e6, pico_auxiliar*max(istr)*1e3, label = 'Streamer de 1.65 $\mu$s de duración')
+#plt.plot(t_istr_aux[inicio_pico:fin_pico]*1e6, pico_auxiliar[inicio_pico:fin_pico]*max(istr)*1e3, '.-')
+plt.xlabel('tiempo ($\mu$s)', fontsize = 20)
+plt.ylabel('I$_{str}$ (mA)', fontsize = 20)
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
+plt.legend(fontsize = 20)
+plt.grid(True) 
+   
 
 
 #%%

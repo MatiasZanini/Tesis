@@ -1,21 +1,13 @@
 
-Mediciones hechas con alambre fino
-
-
-
-a la izquierda es el voltaje de pico a pico de la señal de entrada. A la derecha es el voltaje de la fuente negativa en kv
-
-14 kv    -9.02 kv
-
-10.2kv (posicion 3 del ampli)      -11.3 kv  
-
-
-13.2 kv               -11.3   
+Mediciones hechas con PVC alambre fino. La punta de streamer midio con un factor 10 de más (la punta estaba rota y no era x10 sino x1).
 
 
 Concentracion NO.csv
-	primer caida correspondiente a 14 kV pp con -9 kv de negativa
-	despues 10.2kv pp a-11kv de negativa y por ultimo 13.2kv a -11kv de negativa.
+	primer medicion: 14 kV pp con -9.02 kv de negativa. Bobina gas 1 a 3
+	
+	segunda medicion: 10.2kv pp a-11.3kv de negativa. Bobina gas 4 a 6
+
+	tercera medicion: 13.2kv a -11.3kv de negativa. Bobina gas 7 a 9
 
 
 

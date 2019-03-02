@@ -101,17 +101,17 @@ EN_suave = np.arange(1,1000, 0.1)*1e-21
 
 plt.figure()
 
-plt.semilogy(EN_suave*1e21, G_excit_suave(EN_suave), label='G(excitación)')    
+plt.semilogy(EN_suave*1e21, G_excit_suave(EN_suave), linewidth=3, label='G(excitación)')    
 
-plt.semilogy(EN_suave*1e21, G_disoc_suave(EN_suave), label= 'G(disociación)')
+plt.semilogy(EN_suave*1e21, G_disoc_suave(EN_suave), linewidth=3, linestyle='--', label= 'G(disociación)')
 
-plt.xlabel('E/N (Td)')
+plt.xlabel('E/N (Td)', fontsize= 20)
 
-plt.ylabel('G')
+plt.ylabel('G', fontsize= 20)
 
-plt.legend()
-
-plt.grid()    
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
+plt.legend(fontsize = 15)
+plt.grid(axis='y')   
     
 
 
@@ -124,7 +124,7 @@ nNO = 500e-6 * N
 
 Q = np.mean(caudal) * 10e-3/3600
 
-dielectrico = 'teflon'
+dielectrico = 'pvc'
 
 
 
@@ -196,7 +196,7 @@ def integrando_cabeza(r):
     
     return (2*G_disoc_suave(Eh(r)/(2.69e25)) + G_excit_suave(Eh(r)/(2.69e25)) )*Eh(r)
 
-
+# 
 
 def efic_cabeza(istr_media, Np, Q):
     
@@ -215,11 +215,56 @@ efic_cabeza_teo = efic_cabeza(i_media, nNO, Q)
 
 print('Aporte a la eficiencia de la cabeza en %:', efic_cabeza_teo*100)
     
+#%%------------------------------------Eh vs r----------------------------------------------------------------------------    
+
+dielectrico = 'pvc'
+
+vdc=-9.02*1e3
     
+hay_streamer = 364
+
+no_streamer = 150
+
+rmin = 72e-3 /2
+rmax = 113.9e-3 /2
+
+puntos = 100
+
+r_dom = np.linspace(rmin, rmax, puntos)
+
+
+E_str = np.array([])
+
+E_nostr = np.array([])
+
+
+
+for k in range(len(r_dom)):
+
+    E_str = np.append(E_str, fteo.campo(r_dom[k], volt[hay_streamer], vdc, dielectrico)[0])
+
+E_str_interpol = interpolate.interp1d(r_dom, E_str)    
+
+
+for m in range(len(r_dom)):
+
+    E_nostr = np.append(E_nostr, fteo.campo(r_dom[m], volt[no_streamer], vdc, dielectrico)[0])
+
+E_nostr_interpol = interpolate.interp1d(r_dom, E_nostr) 
+
+
+plt.figure()
+
+plt.plot((r_dom-rmin)*1e2, E_str_interpol(r_dom)*1e-3/1e2, linewidth = 3, label='Se detecta experimentalmente un streamer') 
+
+plt.plot((r_dom-rmin)*1e2, E_nostr_interpol(r_dom)*1e-3/1e2, linewidth = 3, linestyle= '--', label='No se detecta ningún streamer')
     
-    
-    
-    
+plt.xlabel('r (cm)', fontsize=20)
+plt.ylabel('E (kV/cm)', fontsize=20)
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
+plt.legend(fontsize = 15)
+plt.grid(True) 
+   
     
     
 
@@ -273,19 +318,19 @@ EN_co_suave = np.arange(1,1000, 0.1)*1e-21
 
 
 
-plt.semilogy(EN_co_suave*1e21, G_disoc_N2_suave(EN_co_suave), label='G(disociación N2)')    
+plt.semilogy(EN_co_suave*1e21, G_disoc_N2_suave(EN_co_suave), linewidth = 2, label='G(Recombinación)')    
 
-plt.semilogy(EN_co_suave*1e21, G_disoc_CO_suave(EN_co_suave), label='G(disociación CO)') 
+plt.semilogy(EN_co_suave*1e21, G_disoc_CO_suave(EN_co_suave), linewidth = 2, linestyle= '--', label='G(Disociación CO)') 
 
-plt.semilogy(EN_co_suave*1e21, G_disoc_H2O_suave(EN_co_suave), label='G(disociación H2O)') 
+plt.semilogy(EN_co_suave*1e21, G_disoc_H2O_suave(EN_co_suave), linewidth = 2, linestyle= '-.', label='G(Oxidación)') 
 
-plt.xlabel('E/N (Td)')
+plt.xlabel('E/N (Td)', fontsize=20)
 
-plt.ylabel('G')
+plt.ylabel('G', fontsize=20)
 
-plt.legend()
-
-plt.grid()
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
+plt.legend(fontsize = 15)
+plt.grid(axis='y')   
 
 
 #%%------------------------------------------------CONTRIBUCION CUERPO-----------------------------------------------
@@ -361,6 +406,12 @@ print('La eficiencia porcentual predicha por el modelo es:', efic_cuerpo*100)
 
 N=2.69e25 #en 1/m^3
 
+vdc=-9.02e3
+
+nCO = 350e-6 * N 
+
+nH2O = 10e-6 * N
+
 def Eh(r):
 
     Ehmax = 120e3/1e-2 # en V/m
@@ -373,9 +424,9 @@ def Eh(r):
 
 def integrando_cabeza_co(r):
     
-    return (nCO/N * G_disoc_CO_suave(Eh(r)/N) + 0.5 * nH2O/N * G_disoc_H2O_suave(Eh(r)/N) + 0.7 * G_disoc_N2_suave(Eh(r)/N) )*Eh(r)
+    return ( nCO/N * G_disoc_CO_suave(Eh(r)/N) + 0.5 * nH2O/N * G_disoc_H2O_suave(Eh(r)/N) +  0.7 * G_disoc_N2_suave(Eh(r)/N) )*Eh(r)
 
-
+#    
 
 def efic_cuerpo(istr_media, Np, Q):
     
@@ -384,7 +435,7 @@ def efic_cuerpo(istr_media, Np, Q):
     return istr_media * (integrate.quad(integrando_cabeza_co, 9e-4, 19e-3, limit=200))[0] / denom
 
 
-i_media = 0.6197209574193261*1e-3
+i_media = cor_media_istr
 
 nCO = 350e-6 * N
 
@@ -392,7 +443,7 @@ Q = np.mean(caudal)*1e-3/ 3600
 
 efic_cuerpo_teo = efic_cuerpo(i_media, nCO, Q)
 
-print('Aporte a la eficiencia porcentual de la cabeza:', efic_cuerpo_teo*100)
+print('Aporte a la eficiencia porcentual de la cabeza en %:', efic_cuerpo_teo*100)
 
 
 
