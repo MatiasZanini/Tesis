@@ -75,7 +75,7 @@ print(capacidad_total)
 #%% ---------------------------------INTERPOLACION DE G----------------------------------------------------------
         
         
-EN, mob, k_excit, k_disoc  = np.loadtxt(r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\Bolsig\20190227\NO\params_NO_100pts.txt', unpack=True)
+EN, mob, k_excit, k_disoc  = np.loadtxt(r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\Bolsig\20190227\NO\params_NO_100pts.txt', unpack=True)
     
 G_excit = k_excit/((EN*1e-21)**2 * mob)*100    #en 1/V
 
@@ -294,7 +294,7 @@ print('maximo r para integrar=', rmax)
 #%%-------------------------------------------ANALISIS PARA EL CO-------------------------------------------------
 
 
-EN_co, mob_co, k_disoc_N2, k_disoc_CO, k_disoc_H2O = np.loadtxt(r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\Bolsig\20190227\CO\params_CO_100pts.txt', unpack=True)
+EN_co, mob_co, k_disoc_N2, k_disoc_CO, k_disoc_H2O = np.loadtxt(r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\Bolsig\20190227\CO\params_CO_100pts.txt', unpack=True)
 
 
 G_disoc_N2 = k_disoc_N2/((EN_co*1e-21)**2 * mob_co)*100    #en 1/V

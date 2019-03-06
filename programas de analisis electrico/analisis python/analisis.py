@@ -35,7 +35,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181211\Concentracion CO.csv") as csvfile:
+with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Concentracion NO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -77,14 +77,14 @@ print('duración de la medición total:',duracion,'minutos')
 
 plt.figure()
 
-func.ploteo_concentracion(CO,duracion,'CO')
+func.ploteo_concentracion(NO,duracion,'NO')
 
 
 #%%----------------CARGA LOS DATOS DE POTENCIA MEDIDOS Y LOS GRAFICA------------------------------------------------------
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181211\Trafo gas 2.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Bobina gas.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -118,11 +118,11 @@ plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize 
 #%% ------------------------------PREVISUALIZACION DE LAS POTENCIAS-------------------------
 cant_periodos=6
 
-tolerancia_picos= 2 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
+tolerancia_picos= 1 # si es >1 aumentara la cantidad de picos reconocidos como streamers, si es <1 los mas chicos se eliminaran.
 
 fuente_continua= -9.02 #en kV
 
-alta_frecuencia=False #si es una medicion de alta frecuencia poner True, o False de lo contrario.
+alta_frecuencia=True #si es una medicion de alta frecuencia poner True, o False de lo contrario.
 
 iper, tper = func.calculo_per(cant_periodos, t_volt, volt) #calcula la cantidad de elementos en un periodo y su duracion
 
@@ -159,19 +159,19 @@ plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize 
 
 #%%  ------------------------------potencia con ventana-----------------------------
 
-path_comp = r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181210\Trafo gas 1.csv'
+path_comp = r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Bobina gas.csv'
 
-path = r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181210\Trafo ventana gas 1.csv'
+path = r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Bobina gas ventana 1.csv'
 
 fuente_continua= -9.02 #en kV
 
-tolerancia_picos = 1
+tolerancia_picos = 2
 
 t_comp, volt_comp = func.acondic(path_comp)[0:2]
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
-alta_frecuencia = False
+alta_frecuencia = True
 
 potencia_istr, cor_media_istr, istr_aux = func.potencia_ventana(t_comp, volt_comp, t_istr, istr, volt, cant_periodos, v_dc_in=fuente_continua*1000, altafrec=alta_frecuencia,  tolerancia_corte=tolerancia_picos)
 
@@ -293,11 +293,11 @@ print('Corriente media de DBD en mA:', cor_media_idbd*1000)             #valor +
 
 potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio= 12 #poner el minuto en que se encendió la descarga
+inicio= 27 #poner el minuto en que se encendió la descarga
 
-fin=23  #poner el minuto en que finalizó la descarga
+fin= 47  #poner el minuto en que finalizó la descarga
 
-efic_porcentual, efic_ener = func.eficiencia(duracion, CO, caudal, potencia_final, inicio, fin)
+efic_porcentual, efic_ener = func.eficiencia(duracion, NO, caudal, potencia_final, inicio, fin)
 
 print('Potencia total en W:', potencia_final)
 print('eficiencia porcentual:', efic_porcentual, '%')
