@@ -2,7 +2,7 @@
 """
 Created on Tue Oct  2 12:38:02 2018
 
-@author: Matías
+@author: Mati
 """
 
 import csv
@@ -25,7 +25,7 @@ reload(func)
 
 csv.register_dialect('pycoma', delimiter=';')
 
-#datos = open(r'C:\Users\Matías\Documents\GitHub\Tesis\20180928\Concentracion NO.csv', 'rt')
+#datos = open(r'C:\Users\Mati\Documents\GitHub\Tesis\20180928\Concentracion NO.csv', 'rt')
 
 matriz=[]
 NO=np.array([]) #en PPM
@@ -35,7 +35,7 @@ NOx=np.array([]) #en PPM
 caudal=np.array([]) #en l/h
 #arrcomp=[]
 
-with open(r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Concentracion NO.csv") as csvfile:
+with open(r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181120\Concentracion NO.csv") as csvfile:
     reader = csv.reader(csvfile,dialect='pycoma', quoting=csv.QUOTE_NONNUMERIC) # change contents to floats
     for row in reader: # cada fila es una lista
         matriz.append(row)
@@ -84,7 +84,7 @@ func.ploteo_concentracion(NO,duracion,'NO')
 
 
 # Ploteo de las mediciones crudas y carga de datos
-path=r"C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Bobina gas.csv"  #ingresar el path de la medicion electrica
+path=r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181120\Trafo gas ventana 2.csv"  #ingresar el path de la medicion electrica
 
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
@@ -96,7 +96,7 @@ plt.subplots(3,1, sharex=True)
 g1 = plt.subplot(3,1,1)
 plt.plot(t_volt*1000,volt/1000)
 #plt.xlabel('tiempo (ms)', fontsize=20)
-plt.ylabel('V$_{ac}$ (kV)', fontsize=18)
+plt.ylabel('V$_{12}$ (kV)', fontsize=18)
 plt.grid(True)
 plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 15)
 
@@ -159,19 +159,23 @@ plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize 
 
 #%%  ------------------------------potencia con ventana-----------------------------
 
-path_comp = r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Bobina gas.csv'
+path_comp = r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181120\Trafo gas.csv'
 
-path = r'C:\Users\Matías\Documents\GitHub\Tesis\Mediciones\20181120\Bobina gas ventana 1.csv'
+path = r'C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181120\Trafo gas ventana 1.csv'
 
 fuente_continua= -9.02 #en kV
 
-tolerancia_picos = 2
+tolerancia_picos = 1
+
+cant_periodos = 5
 
 t_comp, volt_comp = func.acondic(path_comp)[0:2]
 
+iper, tper = func.calculo_per(cant_periodos, t_comp, volt_comp)
+
 t_volt, volt, t_idbd, idbd, t_istr, istr = func.acondic(path)
 
-alta_frecuencia = True
+alta_frecuencia = False
 
 potencia_istr, cor_media_istr, istr_aux = func.potencia_ventana(t_comp, volt_comp, t_istr, istr, volt, cant_periodos, v_dc_in=fuente_continua*1000, altafrec=alta_frecuencia,  tolerancia_corte=tolerancia_picos)
 
@@ -257,13 +261,13 @@ tolerancia_corte_str= 2  # si es >1 aumentara la cantidad de picos reconocidos c
 
 tolerancia_corte_dbd= 1
 
-path = r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181102"
+path = r"C:\Users\Mati\Documents\GitHub\Tesis\Mediciones\20181210"
 
 subpath= 'Bobina gas '  #indicar nombre generico de las mediciones
 
-inicio_med = 16 # indicar primer numero de la tira de mediciones
+inicio_med = 1 # indicar primer numero de la tira de mediciones
 
-fin_med = 19 # indicar ultimo numero de la tira de mediciones
+fin_med = 3 # indicar ultimo numero de la tira de mediciones
 
     
 potencia_istr, potencia_idbd, cor_media_istr, cor_media_idbd = func.potencia_prom(cant_per_iter, voltaje_continua, alta_frec, tolerancia_corte_str, tolerancia_corte_dbd, path, subpath, inicio_med, fin_med)
@@ -293,15 +297,15 @@ print('Corriente media de DBD en mA:', cor_media_idbd*1000)             #valor +
 
 potencia_final= potencia_idbd + potencia_istr #en watts
 
-inicio= 27 #poner el minuto en que se encendió la descarga
+inicio= 6 #poner el minuto en que se encendió la descarga
 
-fin= 47  #poner el minuto en que finalizó la descarga
+fin= 17  #poner el minuto en que finalizó la descarga
 
-efic_porcentual, efic_ener = func.eficiencia(duracion, NO, caudal, potencia_final, inicio, fin)
+efic_porcentual, efic_ener = func.eficiencia(duracion, CO, caudal, potencia_final, inicio, fin)
 
 print('Potencia total en W:', potencia_final)
 print('eficiencia porcentual:', efic_porcentual, '%')
-print('eficiencia por potencia:',efic_ener,'mol/(kW H)')
+print('rendimiento energético:',efic_ener,'mol/(kW H)')
 
 
 
@@ -367,7 +371,7 @@ plt.grid(True)
 #LEER UN ARCHIVO CSV
 csv.register_dialect('pycoma', delimiter=';')
 
-f = open(r'C:\Users\Matías\Documents\GitHub\Tesis\20181016(Jorge)\reactor jorge.csv', 'rt')
+f = open(r'C:\Users\Mati\Documents\GitHub\Tesis\20181016(Jorge)\reactor jorge.csv', 'rt')
 try:
     #reader = csv.reader(f,dialect='pycoma') #si no se pone el dialect es ',' por defecto
     reader = csv.reader(f)
@@ -380,7 +384,7 @@ finally:
     
 #-----------------------------------------------------medicion de Jorge------------------------------------------------
 matriz=[]
-with open(r'C:\Users\Matías\Documents\GitHub\Tesis\20181016(Jorge)\reactor jorge.csv') as csvfile:
+with open(r'C:\Users\Mati\Documents\GitHub\Tesis\20181016(Jorge)\reactor jorge.csv') as csvfile:
         reader = csv.reader(csvfile) # change contents to floats
         for row in reader: # cada fila es una lista
             matriz.append(row)
