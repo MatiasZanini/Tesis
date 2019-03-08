@@ -251,7 +251,7 @@ def potencia(t_pot, cor_pot, v_ac_in, cant_periodos, v_dc_in = (-9000), altafrec
                 cor_suma += cor_pot[ind_pot]*0.5*(1+np.sign(cor_aux[ind_pot]))
         else:
             for ind_pot in range(ind_per):
-                pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med + v_dc)
+                pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med)
                 cor_suma += cor_pot[ind_pot]
         pot_avg = pot/ind_per             #potencia media en W
         cor_avg = cor_suma/ind_per   #corriente promedio en A    
@@ -381,7 +381,7 @@ def potencia_ventana(t_completo, v_completo, t_pot, cor_pot, v_ac_in, cant_perio
                 cor_suma += cor_pot[ind_pot]*0.5*(1+np.sign(cor_aux[ind_pot]))
         else:
             for ind_pot in range(ind_per):
-                pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med + v_dc)
+                pot += cor_aux[ind_pot]*(v_ac_in[ind_pot] - v_ac_med)
                 cor_suma += cor_pot[ind_pot]
         pot_avg = pot/ind_per * (t_pot[len(t_pot)-1]-t_pot[0])/t_per            #potencia media en W
         cor_avg = cor_suma/ind_per* (t_pot[len(t_pot)-1]-t_pot[0])/t_per   #corriente promedio en A    
